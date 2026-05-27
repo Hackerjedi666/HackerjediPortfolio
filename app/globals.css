@@ -1,26 +1,266 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ============================================================
+   DESIGN SYSTEM — editorial minimal, paper & ink.
+   Tokens here are the only language sections may speak in.
+   Light is the default declared in @theme; dark overrides come below.
+   Token NAMES never change — components consume names, themes swap values.
+   ============================================================ */
+@theme {
+  /* ---------- Palette: LIGHT (default), one accent ---------- */
+  --color-paper: #f4f2ee;        /* warm off-white, newsprint base */
+  --color-paper-deep: #ece8e0;   /* slight tonal step for ancillary surfaces */
+  --color-ink: #131211;          /* near-black, slight warmth, never #000 */
+  --color-ink-soft: #5b5651;     /* secondary copy */
+  --color-ink-mute: #67615a;     /* captions, datelines, footnotes — 5.47:1 vs paper, 5.00:1 vs paper-deep (AA + headroom) */
+  --color-rule: #c9c2ba;         /* hairlines only */
+  --color-accent: #7b2a1f;       /* oxblood — used like a printer's mark, never as a CTA */
+
+  /* ---------- Type: two faces, no sans ---------- */
+  --font-serif: var(--font-fraunces);
+  --font-mono: var(--font-jetbrains-mono);
+
+  /* ---------- Modular type scale, dramatic contrast (11px → 80px) ---------- */
+  --text-caption: 0.6875rem;             /* 11 — datelines, signatures, eyebrows */
+  --text-caption--line-height: 1.4;
+  --text-caption--letter-spacing: 0.18em;
+
+  --text-body-sm: 0.875rem;              /* 14 — small notes, the temp dump */
+  --text-body-sm--line-height: 1.55;
+
+  --text-body: 1.0625rem;                /* 17 — body */
+  --text-body--line-height: 1.6;
+
+  --text-lede: 1.3125rem;                /* 21 — long-form lede / stance */
+  --text-lede--line-height: 1.5;
+
+  --text-h2: 2.25rem;                    /* 36 — section + signed name */
+  --text-h2--line-height: 1.1;
+  --text-h2--letter-spacing: -0.01em;
+
+  --text-sub-display: 3.5rem;            /* 56 — mobile masthead */
+  --text-sub-display--line-height: 1.02;
+  --text-sub-display--letter-spacing: -0.015em;
+
+  --text-display: 5rem;                  /* 80 — desktop masthead */
+  --text-display--line-height: 1.0;
+  --text-display--letter-spacing: -0.02em;
+
+  /* ---------- Spacing: 8px base, named in editorial "units" ---------- */
+  --spacing-1u: 0.5rem;    /* 8  — hairline gap */
+  --spacing-2u: 1rem;      /* 16 — line gap */
+  --spacing-3u: 1.5rem;    /* 24 — paragraph */
+  --spacing-5u: 2.5rem;    /* 40 — subsection */
+  --spacing-8u: 4rem;      /* 64 — section */
+  --spacing-12u: 6rem;     /* 96 — major section */
+  --spacing-18u: 9rem;     /* 144 — masthead breathing */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ============================================================
+   DARK THEME — explicit attribute override.
+   Set by the inline boot script in app/layout.tsx before first paint.
+   Mapped by ROLE: ground / raised surface / primary text /
+   secondary text / caption text / hairline / restrained cold accent.
+   No glow, no pure black, no pure white, no neon.
+   ============================================================ */
+[data-theme="dark"] {
+  --color-paper: #0d0e12;        /* cool near-black ground */
+  --color-paper-deep: #16171d;   /* slightly raised surface, one step up */
+  --color-ink: #e8e4d8;          /* warm bone primary — never #fff */
+  --color-ink-soft: #a8a59c;     /* mid-light secondary, ≥8:1 vs paper */
+  --color-ink-mute: #888579;     /* dimmer caption gray, ≥5:1 vs paper */
+  --color-rule: #383a41;         /* hairline visible on dark, matches light-mode rule ratio */
+  --color-accent: #6b8a96;       /* desaturated steel-cyan, status-LED — never electric */
 }
 
+/* OS-preference fallback (no-JS users, or before boot script runs).
+   Dark applies when the user hasn't explicitly set data-theme="light". */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    --color-paper: #0d0e12;
+    --color-paper-deep: #16171d;
+    --color-ink: #e8e4d8;
+    --color-ink-soft: #a8a59c;
+    --color-ink-mute: #888579;
+    --color-rule: #383a41;
+    --color-accent: #6b8a96;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ============================================================
+   Base — paper canvas, optical-sized serif, selection styled in accent.
+   ============================================================ */
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+  }
+  body {
+    font-family: var(--font-serif), "Iowan Old Style", Georgia, serif;
+    font-size: var(--text-body);
+    line-height: 1.6;
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-paper);
+  }
+
+  /* One subtle, opacity-only reveal on page mount. No transforms. */
+  main {
+    animation: editorial-rise 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    main {
+      animation: none;
+    }
+  }
+}
+
+@keyframes editorial-rise {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================================
+   Theme toggle — View Transitions API circular reveal.
+   The toggle JS sets --theme-reveal-{x,y,r} on <html> from the
+   button's center + the farthest-corner distance, then calls
+   document.startViewTransition(applyTheme). The NEW theme wipes
+   in from that point as an expanding clip-path circle; the OLD
+   sits underneath, static (no opacity crossfade — that would
+   melt the page). Reduced-motion (and the absence of the API)
+   forces instant swap; both gates live in the toggle JS too,
+   so this CSS is dead weight in those cases, never invoked.
+   ============================================================ */
+::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  z-index: 1;
+}
+::view-transition-new(root) {
+  animation: theme-circle-reveal 520ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  mix-blend-mode: normal;
+  z-index: 2;
+}
+@keyframes theme-circle-reveal {
+  from {
+    clip-path: circle(0 at var(--theme-reveal-x, 50vw) var(--theme-reveal-y, 50vh));
+  }
+  to {
+    clip-path: circle(
+      var(--theme-reveal-r, 150vmax) at var(--theme-reveal-x, 50vw)
+        var(--theme-reveal-y, 50vh)
+    );
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}
+
+/* Theme-toggle icon morph — both Sun and Moon render stacked; the
+   data-theme attribute picks which is visible. CSS-only so the
+   visible icon ALWAYS matches data-theme regardless of React's
+   hydration state (no flash, no mismatch). Rotate + scale + fade
+   together for a tactile cross-morph; suppressed under reduced-motion. */
+.theme-icon {
+  transition: opacity 280ms ease, transform 280ms ease;
+}
+[data-theme="dark"] .theme-icon--light {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.6);
+}
+[data-theme="dark"] .theme-icon--dark {
+  opacity: 1;
+  transform: rotate(0) scale(1);
+}
+[data-theme="light"] .theme-icon--light {
+  opacity: 1;
+  transform: rotate(0) scale(1);
+}
+[data-theme="light"] .theme-icon--dark {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.6);
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-icon {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   Section rail — native smooth scroll for the left-rail jumps.
+   Gate on no-preference so reduced-motion users get instant
+   jumps (default scroll-behavior is auto). NO JS smooth-scroll
+   library is added (Lenis was deliberately removed) — this
+   browser-native one-liner is the whole story.
+   ============================================================ */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Anchor landing margin — sections already have py-18u internal
+   padding, so the title sits well below the section's outer edge.
+   A small scroll-margin keeps the section's outer edge from butting
+   the viewport's top when jumped to. */
+#top,
+#selected-work,
+#open-source,
+#capabilities,
+#ventures,
+#articles,
+#contact {
+  scroll-margin-top: var(--spacing-3u);
+}
+
+/* ============================================================
+   Articles inner-scroll — desktop only.
+   The 38 rows live in a fixed-height region so the section stays
+   compact; the user scrolls the list WITHIN the section.
+     - overscroll-behavior: contain  → stops scroll-chaining feel
+       jank at the inner-list boundaries (page resumes naturally
+       only when cursor leaves the box).
+     - scrollbar-width thin + tokened color → subtle bar, both themes
+       (Firefox uses these two properties; WebKit/Blink need the
+       ::-webkit-scrollbar pseudo blocks below).
+     - mask-image gradient → fades the bottom edge so the reader
+       sees "more below" without a chunky shadow or affordance chip.
+   Mobile (below md): unset, list flows naturally. Nested touch
+   scroll inside another scroll is consistently janky on iOS/Android.
+   ============================================================ */
+@media (min-width: 768px) {
+  .articles-scroll {
+    max-height: 60vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-rule) transparent;
+    mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
+  }
+  .articles-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  .articles-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .articles-scroll::-webkit-scrollbar-thumb {
+    background-color: var(--color-rule);
+    border-radius: 3px;
+  }
+  .articles-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-ink-mute);
+  }
 }

@@ -1,65 +1,89 @@
-import Image from "next/image";
+import { PORTFOLIO_DATA } from "@/lib/content/portfolio-data";
+import { SelectedWork } from "@/components/sections/selected-work";
+import { OpenSource } from "@/components/sections/open-source";
+import { Capabilities } from "@/components/sections/capabilities";
+import { Ventures } from "@/components/sections/ventures";
+import { Articles } from "@/components/sections/articles";
+import { Contact } from "@/components/sections/contact";
+import { isPlaceholder } from "@/lib/utils";
 
 export default function Home() {
+  const { name, title, masthead, location } = PORTFOLIO_DATA.meta;
+  // Masthead falls back to title when the editorial line is a placeholder
+  // ("TODO: confirm" or empty) — same gate the rest of the site uses.
+  const mastheadText = isPlaceholder(masthead) ? title : masthead;
+
+  // Split the bio at the sentence boundary. Strip the title prefix from the
+  // first sentence so the masthead claim (title) isn't restated underneath.
+  const sentences = PORTFOLIO_DATA.bio.split(/(?<=\.)\s+/);
+  const factSentence = sentences[0] ?? PORTFOLIO_DATA.bio;
+  const titlePrefix = `${title} with `.toLowerCase();
+  const scopeRaw = factSentence.toLowerCase().startsWith(titlePrefix)
+    ? factSentence.slice(titlePrefix.length)
+    : factSentence;
+  const scopeSentence = scopeRaw.charAt(0).toUpperCase() + scopeRaw.slice(1);
+  const stanceSentence = sentences[1] ?? "";
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className="min-h-screen">
+      <article id="top" className="px-3u py-12u md:px-8u md:py-18u">
+        {/* Dateline — publication mark, pinned top-left. */}
+        <header>
+          <p className="font-mono text-caption uppercase text-ink-mute">
+            Profile&nbsp;001
+            <br />
+            <span className="text-ink-soft">2026</span>
           </p>
+        </header>
+
+        {/* Masthead. <h1> = the short editorial claim — `meta.masthead` when
+            real, falling back to `meta.title` when masthead is a placeholder.
+            Case is preserved exactly (no text-transform utility on this h1),
+            so the editorial lowercase second clause survives to the DOM. The
+            grid column itself caps the width to ~50% of viewport — the right
+            band is deliberately blank paper, where a portrait would sit in a
+            magazine. */}
+        <div className="mt-12u grid grid-cols-12 gap-x-3u md:mt-18u">
+          <h1 className="col-span-12 font-serif text-sub-display text-balance text-ink md:col-span-7 md:col-start-3 md:text-display">
+            {mastheadText}
+          </h1>
+
+          {/* Lede block — scope (factual sentence with the title prefix stripped)
+              + stance. Single oxblood hairline marks the transition from heading
+              to body voice. */}
+          <div className="col-span-12 mt-5u md:col-span-7 md:col-start-3 md:mt-8u">
+            <span aria-hidden="true" className="mb-3u block h-px w-8u bg-accent" />
+            <p className="max-w-[44ch] font-serif text-lede text-ink-soft">
+              {scopeSentence}
+            </p>
+            {stanceSentence ? (
+              <p className="mt-3u max-w-[44ch] font-serif text-lede text-ink-soft">
+                {stanceSentence}
+              </p>
+            ) : null}
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+        {/* Signature — name as byline, aligned to the masthead column. Spaced
+            from the lede by a single declared rhythm unit (mt-18u). No flex
+            stretching, no min-h-screen on the hero block. */}
+        <footer className="mt-18u grid grid-cols-12 gap-x-3u">
+          <div className="col-span-12 md:col-span-5 md:col-start-3">
+            <p className="font-mono text-caption uppercase text-ink-mute">Signed</p>
+            <p className="mt-2u font-serif text-h2 text-ink">{name}</p>
+            <p className="mt-1u font-mono text-caption uppercase text-ink-mute">
+              {title}&nbsp;·&nbsp;{location}
+            </p>
+          </div>
+        </footer>
+      </article>
+
+      <SelectedWork />
+      <OpenSource />
+      <Capabilities />
+      <Ventures />
+      <Articles />
+      <Contact />
+    </main>
   );
 }
