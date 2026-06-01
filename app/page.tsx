@@ -38,7 +38,7 @@ export default function Home() {
         <div
           data-choreograph="hero-intro"
           aria-hidden="true"
-          className="pointer-events-none fixed inset-0 z-30 flex flex-col items-center justify-center font-mono"
+          className="pointer-events-none fixed inset-0 z-30 flex flex-col items-center justify-center bg-paper font-mono"
         >
           <p
             className="font-mono text-h2 text-ink-mute"
