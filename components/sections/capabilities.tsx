@@ -1,4 +1,6 @@
 import { PORTFOLIO_DATA } from "@/lib/content/portfolio-data";
+import { ScrambleText } from "@/components/scramble-text";
+import { TypeOut } from "@/components/type-out";
 
 export function Capabilities() {
   const capabilities = PORTFOLIO_DATA.capabilities;
@@ -21,12 +23,14 @@ export function Capabilities() {
           re-narration of those engagements. */}
       <div className="grid grid-cols-12 gap-x-3u">
         <header className="col-span-12 md:col-span-9 md:col-start-3">
-          <p className="font-mono text-caption uppercase text-ink-mute">{eyebrow}</p>
+          <p className="font-mono text-caption uppercase text-ink-mute">
+            <TypeOut>{eyebrow}</TypeOut>
+          </p>
           <h2
             id="capabilities-heading"
             className="mt-3u font-serif text-h2 text-balance text-ink"
           >
-            Capabilities
+            <ScrambleText>Capabilities</ScrambleText>
           </h2>
           <p className="mt-5u max-w-[52ch] font-serif text-lede text-ink-soft">
             Four standing domains the engagements draw from. The cases prove

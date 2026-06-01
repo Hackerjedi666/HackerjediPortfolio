@@ -1,5 +1,7 @@
 import { PORTFOLIO_DATA } from "@/lib/content/portfolio-data";
 import { isPlaceholder } from "@/lib/utils";
+import { ScrambleText } from "@/components/scramble-text";
+import { TypeOut } from "@/components/type-out";
 
 // Editorial date format — "18 NOV 2025". Distinct from Selected Work's
 // year-only date and from any prose date — looks like a newspaper dateline.
@@ -47,12 +49,14 @@ export function Articles() {
           names the drive-to-X intent honestly: written there, read there. */}
       <div className="grid grid-cols-12 gap-x-3u">
         <header className="col-span-12 md:col-span-9 md:col-start-3">
-          <p className="font-mono text-caption uppercase text-ink-mute">{eyebrow}</p>
+          <p className="font-mono text-caption uppercase text-ink-mute">
+            <TypeOut>{eyebrow}</TypeOut>
+          </p>
           <h2
             id="articles-heading"
             className="mt-3u font-serif text-h2 text-balance text-ink"
           >
-            Articles
+            <ScrambleText>Articles</ScrambleText>
           </h2>
           <p className="mt-5u max-w-[52ch] font-serif text-lede text-ink-soft">
             Research notes on offensive security and trusted-execution work.

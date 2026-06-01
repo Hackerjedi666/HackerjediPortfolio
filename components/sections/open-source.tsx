@@ -1,4 +1,6 @@
 import { PORTFOLIO_DATA, type ProjectType } from "@/lib/content/portfolio-data";
+import { ScrambleText } from "@/components/scramble-text";
+import { TypeOut } from "@/components/type-out";
 
 // Mono tag labels — keep punctuation-clean since they're rendered uppercase
 // with letter-spacing via the caption type-token. Record over the union so
@@ -35,12 +37,14 @@ export function OpenSource() {
           register beneath. */}
       <div className="grid grid-cols-12 gap-x-3u">
         <header className="col-span-12 md:col-span-9 md:col-start-3">
-          <p className="font-mono text-caption uppercase text-ink-mute">{eyebrow}</p>
+          <p className="font-mono text-caption uppercase text-ink-mute">
+            <TypeOut>{eyebrow}</TypeOut>
+          </p>
           <h2
             id="open-source-heading"
             className="mt-3u font-serif text-h2 text-balance text-ink"
           >
-            Open Source
+            <ScrambleText>Open Source</ScrambleText>
           </h2>
           <p className="mt-5u max-w-[52ch] font-serif text-lede text-ink-soft">
             Public artifacts shipped alongside engagements — recon pipelines,
@@ -93,7 +97,7 @@ export function OpenSource() {
                     <span className="mr-2u font-mono text-caption uppercase tabular-nums text-ink-mute">
                       {indexStr}
                     </span>
-                    <span className="underline decoration-rule underline-offset-4 group-hover:decoration-accent">
+                    <span className="glitch-hover underline decoration-rule underline-offset-4 group-hover:decoration-accent">
                       {project.name}
                     </span>
                     <span aria-hidden="true" className="hidden text-ink-mute md:inline">

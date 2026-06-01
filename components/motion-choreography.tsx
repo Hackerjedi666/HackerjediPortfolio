@@ -55,19 +55,57 @@ export function MotionChoreography() {
         },
       });
 
-      // Masthead words rise with stagger — the centerpiece of the reveal.
-      tl.from(
-        '[data-choreograph="hero-masthead"] [data-word]',
-        {
-          y: 80,
-          opacity: 0,
-          scale: 0.92,
-          duration: 0.6,
-          ease: "expo.out",
-          stagger: 0.18,
-        },
-        0
+      // Masthead words rise + DECODE (per-word scramble tied to each word's
+      // GSAP progress). Each word gets its own tween so onUpdate fires
+      // per-element. As user scrolls, scroll progress → tween progress →
+      // scramble resolve fraction. The hacker decode happens IN-SYNC with the
+      // rise; by the time the word is fully visible it's also fully decoded.
+      const SCRAMBLE_CHARS =
+        "!<>-_\\/[]{}=+*^?#$%&0123456789ABCDEF";
+      const mastheadWords = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          '[data-choreograph="hero-masthead"] [data-word]'
+        )
       );
+      mastheadWords.forEach((word, i) => {
+        const target = word.textContent ?? "";
+        tl.from(
+          word,
+          {
+            y: 80,
+            opacity: 0,
+            scale: 0.92,
+            duration: 0.6,
+            ease: "expo.out",
+            onUpdate: function () {
+              const p = this.progress();
+              if (p >= 1) {
+                word.textContent = target;
+                return;
+              }
+              let out = "";
+              for (let j = 0; j < target.length; j++) {
+                if (Math.random() < p) {
+                  out += target[j];
+                } else {
+                  const c = target[j];
+                  out +=
+                    c === " " || c === "\n" || c === "\t"
+                      ? c
+                      : SCRAMBLE_CHARS[
+                          Math.floor(Math.random() * SCRAMBLE_CHARS.length)
+                        ];
+                }
+              }
+              word.textContent = out;
+            },
+            onComplete: () => {
+              word.textContent = target;
+            },
+          },
+          i * 0.18
+        );
+      });
 
       // Lede block follows the masthead in by ~50% of the timeline.
       tl.from(

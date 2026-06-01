@@ -1,5 +1,7 @@
 import { PORTFOLIO_DATA, type VentureStatus } from "@/lib/content/portfolio-data";
 import { isPlaceholder } from "@/lib/utils";
+import { ScrambleText } from "@/components/scramble-text";
+import { TypeOut } from "@/components/type-out";
 
 // Single source for the mono status label. Record over the full VentureStatus
 // union so any new status added in data forces an entry here at compile time.
@@ -34,12 +36,14 @@ export function Ventures() {
           not as a flat pair of logos. */}
       <div className="grid grid-cols-12 gap-x-3u">
         <header className="col-span-12 md:col-span-9 md:col-start-3">
-          <p className="font-mono text-caption uppercase text-ink-mute">{eyebrow}</p>
+          <p className="font-mono text-caption uppercase text-ink-mute">
+            <TypeOut>{eyebrow}</TypeOut>
+          </p>
           <h2
             id="ventures-heading"
             className="mt-3u font-serif text-h2 text-balance text-ink"
           >
-            Ventures
+            <ScrambleText>Ventures</ScrambleText>
           </h2>
           <p className="mt-5u max-w-[60ch] font-serif text-lede text-ink-soft">
             The practice today; the product it&rsquo;s becoming.{" "}

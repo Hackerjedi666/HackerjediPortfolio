@@ -1,4 +1,5 @@
 import { PORTFOLIO_DATA } from "@/lib/content/portfolio-data";
+import { ScrambleText } from "@/components/scramble-text";
 
 // FLAGGED FOR OWNER EDIT — the closing statement, the last voice the
 // reader hears. Sized at text-h2 alongside the email; together they form
@@ -30,7 +31,7 @@ export function Contact() {
             id="contact-heading"
             className="font-serif text-h2 text-balance text-ink"
           >
-            {CLOSING_STATEMENT}
+            <ScrambleText duration={900}>{CLOSING_STATEMENT}</ScrambleText>
           </h2>
 
           {/* EMAIL — the single primary action, the visual anchor. Same
@@ -44,7 +45,7 @@ export function Contact() {
             href={`mailto:${email}`}
             className="group mt-5u inline-block break-words font-serif text-h2 text-balance text-ink"
           >
-            <span className="underline decoration-rule underline-offset-4 group-hover:decoration-accent">
+            <span className="glitch-hover underline decoration-rule underline-offset-4 group-hover:decoration-accent">
               {email}
             </span>
             <span

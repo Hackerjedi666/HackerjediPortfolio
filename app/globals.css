@@ -295,6 +295,58 @@
 }
 
 /* ============================================================
+   Hacker layer — Build A
+   ============================================================ */
+
+/* TypeOut caret — blinking block, sits inline after the typed text.
+   1ch wide so it occupies one mono-character slot; --color-accent so it
+   reads as the same oxblood/steel-cyan as the rest of the marginal marks. */
+.type-caret {
+  display: inline-block;
+  width: 0.6ch;
+  height: 1em;
+  margin-left: 0.15ch;
+  vertical-align: -0.12em;
+  background: var(--color-accent);
+  animation: type-caret-blink 720ms steps(1) infinite;
+}
+@keyframes type-caret-blink {
+  0%, 50%   { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .type-caret { animation: none; opacity: 1; }
+}
+
+/* Glitch hover — RGB-split text-shadow + tiny jitter on hover. Subtle so it
+   reads as "security-camera artifact" rather than "broken text." One-shot
+   200ms animation; doesn't loop. Reduced-motion: no glitch, no shake. */
+.glitch-hover {
+  display: inline-block;
+  transition: text-shadow 80ms ease-out;
+  will-change: transform, text-shadow;
+}
+.glitch-hover:hover {
+  text-shadow:
+    1.5px 0 0 rgba(255, 30, 110, 0.55),
+    -1.5px 0 0 rgba(0, 200, 255, 0.55);
+  animation: glitch-jitter 220ms steps(5) 1;
+}
+@keyframes glitch-jitter {
+  0%, 100% { transform: translate(0, 0); }
+  20%      { transform: translate(1.5px, -1px); }
+  40%      { transform: translate(-1.5px, 1px); }
+  60%      { transform: translate(0.75px, 0.75px); }
+  80%      { transform: translate(-0.75px, -0.75px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glitch-hover:hover {
+    text-shadow: none;
+    animation: none;
+  }
+}
+
+/* ============================================================
    Articles inner-scroll — desktop only.
    The 38 rows live in a fixed-height region so the section stays
    compact; the user scrolls the list WITHIN the section.

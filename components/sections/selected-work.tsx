@@ -1,5 +1,7 @@
 import { PORTFOLIO_DATA } from "@/lib/content/portfolio-data";
 import { isPlaceholder } from "@/lib/utils";
+import { ScrambleText } from "@/components/scramble-text";
+import { TypeOut } from "@/components/type-out";
 
 export function SelectedWork() {
   const total = PORTFOLIO_DATA.achievements.length;
@@ -18,12 +20,14 @@ export function SelectedWork() {
       {/* Section header — same grammar as hero: mono eyebrow + serif h2. */}
       <div className="grid grid-cols-12 gap-x-3u">
         <header className="col-span-12 md:col-span-9 md:col-start-3">
-          <p className="font-mono text-caption uppercase text-ink-mute">{eyebrowText}</p>
+          <p className="font-mono text-caption uppercase text-ink-mute">
+            <TypeOut>{eyebrowText}</TypeOut>
+          </p>
           <h2
             id="selected-work-heading"
             className="mt-3u font-serif text-h2 text-balance text-ink"
           >
-            Selected Work
+            <ScrambleText>Selected Work</ScrambleText>
           </h2>
 
           {/* Section-level disclosure exhibit. Independent research credential,
@@ -150,7 +154,7 @@ export function SelectedWork() {
                 id={`${engagement.id}-heading`}
                 className="font-serif text-h2 text-balance text-ink"
               >
-                {engagement.title}
+                <ScrambleText>{engagement.title}</ScrambleText>
               </h3>
               <p className="mt-5u font-serif text-body text-ink-soft">
                 {engagement.problem}
@@ -167,7 +171,7 @@ export function SelectedWork() {
                   not oxblood. */}
               <div className="mt-5u">
                 <span aria-hidden="true" className="mb-3u block h-px w-8u bg-accent" />
-                <p className="font-serif text-lede text-ink">{engagement.impact}</p>
+                <p className="glitch-hover font-serif text-lede text-ink">{engagement.impact}</p>
               </div>
             </div>
           </article>
