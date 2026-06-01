@@ -25,7 +25,7 @@ export default function Home() {
   const stanceSentence = sentences[1] ?? "";
 
   return (
-    <main className="min-h-screen">
+    <main className="relative z-10 min-h-screen">
       <article id="top" className="px-3u py-12u md:px-8u md:py-18u">
         {/* Dateline — publication mark, pinned top-left. */}
         <header>
@@ -44,14 +44,36 @@ export default function Home() {
             band is deliberately blank paper, where a portrait would sit in a
             magazine. */}
         <div className="mt-12u grid grid-cols-12 gap-x-3u md:mt-18u">
-          <h1 className="col-span-12 font-serif text-sub-display text-balance text-ink md:col-span-7 md:col-start-3 md:text-display">
-            {mastheadText}
+          <h1
+            data-choreograph="hero-masthead"
+            className="col-span-12 font-serif text-sub-display text-balance text-ink md:col-span-7 md:col-start-3 md:text-display"
+          >
+            {/* Word-split for the Phase 2 scroll-tied reveal. Each word is its
+                own inline-block so GSAP can transform it independently. Spaces
+                preserved as raw text nodes (not spans) so wrap behavior +
+                text-balance work exactly as before. */}
+            {mastheadText.split(/(\s+)/).map((token, i) =>
+              /^\s+$/.test(token) ? (
+                token
+              ) : (
+                <span
+                  key={i}
+                  data-word
+                  className="inline-block will-change-transform"
+                >
+                  {token}
+                </span>
+              )
+            )}
           </h1>
 
           {/* Lede block — scope (factual sentence with the title prefix stripped)
               + stance. Single oxblood hairline marks the transition from heading
               to body voice. */}
-          <div className="col-span-12 mt-5u md:col-span-7 md:col-start-3 md:mt-8u">
+          <div
+            data-choreograph="hero-lede"
+            className="col-span-12 mt-5u md:col-span-7 md:col-start-3 md:mt-8u"
+          >
             <span aria-hidden="true" className="mb-3u block h-px w-8u bg-accent" />
             <p className="max-w-[44ch] font-serif text-lede text-ink-soft">
               {scopeSentence}
@@ -67,7 +89,10 @@ export default function Home() {
         {/* Signature — name as byline, aligned to the masthead column. Spaced
             from the lede by a single declared rhythm unit (mt-18u). No flex
             stretching, no min-h-screen on the hero block. */}
-        <footer className="mt-18u grid grid-cols-12 gap-x-3u">
+        <footer
+          data-choreograph="hero-signature"
+          className="mt-18u grid grid-cols-12 gap-x-3u"
+        >
           <div className="col-span-12 md:col-span-5 md:col-start-3">
             <p className="font-mono text-caption uppercase text-ink-mute">Signed</p>
             <p className="mt-2u font-serif text-h2 text-ink">{name}</p>

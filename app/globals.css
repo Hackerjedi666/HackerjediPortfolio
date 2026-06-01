@@ -64,12 +64,12 @@
    No glow, no pure black, no pure white, no neon.
    ============================================================ */
 [data-theme="dark"] {
-  --color-paper: #0d0e12;        /* cool near-black ground */
-  --color-paper-deep: #16171d;   /* slightly raised surface, one step up */
+  --color-paper: #08090b;        /* luxury deep — sleek, slight cool tint, premium control-screen feel */
+  --color-paper-deep: #13141a;   /* clear surface step — gives the canvas shader more depth to play with */
   --color-ink: #e8e4d8;          /* warm bone primary — never #fff */
   --color-ink-soft: #a8a59c;     /* mid-light secondary, ≥8:1 vs paper */
   --color-ink-mute: #888579;     /* dimmer caption gray, ≥5:1 vs paper */
-  --color-rule: #383a41;         /* hairline visible on dark, matches light-mode rule ratio */
+  --color-rule: #2e3037;         /* slightly cooler hairline against the deeper paper */
   --color-accent: #6b8a96;       /* desaturated steel-cyan, status-LED — never electric */
 }
 
@@ -77,12 +77,12 @@
    Dark applies when the user hasn't explicitly set data-theme="light". */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-paper: #0d0e12;
-    --color-paper-deep: #16171d;
+    --color-paper: #08090b;
+    --color-paper-deep: #13141a;
     --color-ink: #e8e4d8;
     --color-ink-soft: #a8a59c;
     --color-ink-mute: #888579;
-    --color-rule: #383a41;
+    --color-rule: #2e3037;
     --color-accent: #6b8a96;
   }
 }
@@ -199,17 +199,13 @@
 }
 
 /* ============================================================
-   Section rail — native smooth scroll for the left-rail jumps.
-   Gate on no-preference so reduced-motion users get instant
-   jumps (default scroll-behavior is auto). NO JS smooth-scroll
-   library is added (Lenis was deliberately removed) — this
-   browser-native one-liner is the whole story.
+   Section rail — smooth scroll handled by Lenis in MotionProvider
+   (Phase 1 of the premium motion rebuild). The previous
+   `html { scroll-behavior: smooth }` rule was removed because it
+   fought with Lenis's own scroll interpolation. When Lenis is OFF
+   (reduced-motion path), anchor clicks fall through to native
+   instant jump — which is the correct reduced-motion behavior.
    ============================================================ */
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
-  }
-}
 
 /* Anchor landing margin — sections already have py-18u internal
    padding, so the title sits well below the section's outer edge.
@@ -223,6 +219,79 @@
 #articles,
 #contact {
   scroll-margin-top: var(--spacing-3u);
+}
+
+/* ============================================================
+   Custom cursor — Lusion/Linear-style two-layer cursor. The Cursor
+   client component manages position via inline transforms; this CSS
+   owns visual treatment + reveal/grow states.
+
+   Visibility gates:
+     - pointer:coarse → never renders (client returns null)
+     - prefers-reduced-motion → never renders (client returns null)
+     - html.has-custom-cursor → set by client on first pointer move;
+       hides the OS cursor and shows ours. Before first move, OS cursor
+       is shown (avoids "no cursor at all" weirdness on initial paint).
+   ============================================================ */
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html.has-custom-cursor,
+  html.has-custom-cursor body,
+  html.has-custom-cursor a,
+  html.has-custom-cursor button,
+  html.has-custom-cursor [role="button"],
+  html.has-custom-cursor [data-cursor-grow] {
+    cursor: none;
+  }
+
+  /* Cursor uses var(--color-ink) — dark in light theme, light bone in dark
+     theme. Auto-themes via tokens; visible against either paper.
+
+     IMPORTANT: NO mix-blend-mode here. The previous version used
+     `mix-blend-mode: difference` for a theme-agnostic "Lusion auto-invert"
+     trick, but the cursor is position:fixed over a constantly-animating
+     WebGL canvas — every cursor move forced the browser to read back
+     canvas pixels and recomposite the cursor's bounding region at 60 Hz.
+     Compounded with the canvas's own 60 fps draw loop, this destroyed
+     frame rate (the "slow + glitchy" symptom). Solid color is the right
+     tradeoff: 99% visual quality, 0% GPU readback. */
+  .cursor-ring {
+    width: 32px;
+    height: 32px;
+    border-radius: 9999px;
+    border: 1.5px solid var(--color-ink);
+    background: transparent;
+    transition:
+      width 280ms cubic-bezier(0.16, 1, 0.3, 1),
+      height 280ms cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 220ms ease,
+      border-color 220ms ease,
+      opacity 220ms ease;
+    /* will-change: transform only — width/height transitions are infrequent
+       and don't need a permanent compositor hint. */
+    will-change: transform;
+  }
+  .cursor-ring[data-grow="true"] {
+    width: 56px;
+    height: 56px;
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    /* Slight opacity drop on the filled state so it doesn't dominate when
+       sitting on top of dense text. */
+    opacity: 0.4;
+  }
+  .cursor-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 9999px;
+    background: var(--color-ink);
+    transition: opacity 220ms ease;
+    will-change: transform;
+  }
+  /* When ring is grown over an interactive target, hide the dot so it
+     doesn't sit floating inside the filled circle. */
+  html:has(.cursor-ring[data-grow="true"]) .cursor-dot {
+    opacity: 0;
+  }
 }
 
 /* ============================================================

@@ -3,6 +3,11 @@ import { Fraunces, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SectionRail } from "@/components/section-rail";
+import { MotionProvider } from "@/components/motion-provider";
+import { MotionChoreography } from "@/components/motion-choreography";
+import { HeroCanvas } from "@/components/hero-canvas";
+import { Cursor } from "@/components/cursor";
+import { ScrollProgress } from "@/components/scroll-progress";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -44,6 +49,11 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
       </head>
       <body>
+        <HeroCanvas />
+        <MotionProvider />
+        <MotionChoreography />
+        <ScrollProgress />
+        <Cursor />
         <ThemeToggle />
         <SectionRail />
         {children}

@@ -76,6 +76,7 @@ export function Articles() {
       <div className="mt-8u grid grid-cols-12 gap-x-3u md:mt-12u">
         <div
           tabIndex={0}
+          data-lenis-prevent
           aria-label={`Article list — ${total} entries, scrollable`}
           className="articles-scroll col-span-12 md:col-span-9 md:col-start-3"
         >
