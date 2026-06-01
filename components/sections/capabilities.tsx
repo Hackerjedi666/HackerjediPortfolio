@@ -49,7 +49,11 @@ export function Capabilities() {
           vs the header's col-start-3 col-span-9) to give the cells room to
           read without feeling cramped against the article column. */}
       <div className="mt-12u grid grid-cols-12 gap-x-3u md:mt-18u">
-        <ul className="col-span-12 flex list-none flex-col gap-y-12u p-0 md:col-span-10 md:col-start-2 md:grid md:grid-cols-2 md:gap-x-8u md:gap-y-12u">
+        {/* Aligned with the header's col-start-3 col-span-9 — preserves the
+            editorial column rhythm (was col-start-2 col-span-10 to give
+            cells extra breathing room; visually broke the section margin).
+            gap-x reduced from 8u → 5u to compensate for the tighter span. */}
+        <ul className="col-span-12 flex list-none flex-col gap-y-12u p-0 md:col-span-9 md:col-start-3 md:grid md:grid-cols-2 md:gap-x-5u md:gap-y-12u">
           {capabilities.map((capability) => (
             <li key={capability.id} className="flex flex-col">
               {/* Header pair — mono station label + serif domain title. Title

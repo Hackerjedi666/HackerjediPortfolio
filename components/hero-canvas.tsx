@@ -12,10 +12,9 @@ import { getReducedMotion } from "@/lib/motion";
  * The cursor pulls the field toward it and tints it with --color-accent —
  * the trademark "cursor magnetism on the background itself" Lusion move.
  *
- * Theme-aware: a MutationObserver on <html data-theme> re-reads the CSS
- * variables; shader uniforms lerp toward the new colors so theme flips
- * feel continuous (paired with the View Transitions circular reveal,
- * the canvas color drifts under the wipe).
+ * Root-mode-aware: a MutationObserver on html.class re-reads the CSS
+ * variables; shader uniforms lerp toward the new colors so the root-mode
+ * flip (editorial ↔ matrix green/black) drifts under the change.
  *
  * Fallback: if `prefers-reduced-motion` is set or WebGL context creation
  * fails, the component returns null / cleans up. Body retains its
@@ -215,7 +214,7 @@ export function HeroCanvas() {
     });
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["data-theme"],
+      attributeFilter: ["class"],
     });
 
     let raf = 0;

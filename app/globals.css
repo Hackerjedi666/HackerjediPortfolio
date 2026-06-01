@@ -3,18 +3,19 @@
 /* ============================================================
    DESIGN SYSTEM — editorial minimal, paper & ink.
    Tokens here are the only language sections may speak in.
-   Light is the default declared in @theme; dark overrides come below.
-   Token NAMES never change — components consume names, themes swap values.
+   Dark-only — light theme removed; root-mode (terminal green/black)
+   is the only alternate palette.
+   Token NAMES never change — sections consume names, never raw values.
    ============================================================ */
 @theme {
-  /* ---------- Palette: LIGHT (default), one accent ---------- */
-  --color-paper: #f4f2ee;        /* warm off-white, newsprint base */
-  --color-paper-deep: #ece8e0;   /* slight tonal step for ancillary surfaces */
-  --color-ink: #131211;          /* near-black, slight warmth, never #000 */
-  --color-ink-soft: #5b5651;     /* secondary copy */
-  --color-ink-mute: #67615a;     /* captions, datelines, footnotes — 5.47:1 vs paper, 5.00:1 vs paper-deep (AA + headroom) */
-  --color-rule: #c9c2ba;         /* hairlines only */
-  --color-accent: #7b2a1f;       /* oxblood — used like a printer's mark, never as a CTA */
+  /* ---------- Palette: DARK (the only mode), one accent ---------- */
+  --color-paper: #030307;        /* near-black with a whisper of cool tint — premium, not pure #000 */
+  --color-paper-deep: #0a0b0f;   /* surface step — still distinguishable so the hero shader keeps depth */
+  --color-ink: #e8e4d8;          /* warm bone primary — never #fff */
+  --color-ink-soft: #a8a59c;     /* mid-light secondary, ≥8:1 vs paper */
+  --color-ink-mute: #888579;     /* dimmer caption gray, ≥5:1 vs paper */
+  --color-rule: #2e3037;         /* slightly cooler hairline against the deeper paper */
+  --color-accent: #6b8a96;       /* desaturated steel-cyan, status-LED — never electric */
 
   /* ---------- Type: two faces, no sans ---------- */
   --font-serif: var(--font-fraunces);
@@ -57,37 +58,6 @@
 }
 
 /* ============================================================
-   DARK THEME — explicit attribute override.
-   Set by the inline boot script in app/layout.tsx before first paint.
-   Mapped by ROLE: ground / raised surface / primary text /
-   secondary text / caption text / hairline / restrained cold accent.
-   No glow, no pure black, no pure white, no neon.
-   ============================================================ */
-[data-theme="dark"] {
-  --color-paper: #08090b;        /* luxury deep — sleek, slight cool tint, premium control-screen feel */
-  --color-paper-deep: #13141a;   /* clear surface step — gives the canvas shader more depth to play with */
-  --color-ink: #e8e4d8;          /* warm bone primary — never #fff */
-  --color-ink-soft: #a8a59c;     /* mid-light secondary, ≥8:1 vs paper */
-  --color-ink-mute: #888579;     /* dimmer caption gray, ≥5:1 vs paper */
-  --color-rule: #2e3037;         /* slightly cooler hairline against the deeper paper */
-  --color-accent: #6b8a96;       /* desaturated steel-cyan, status-LED — never electric */
-}
-
-/* OS-preference fallback (no-JS users, or before boot script runs).
-   Dark applies when the user hasn't explicitly set data-theme="light". */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --color-paper: #08090b;
-    --color-paper-deep: #13141a;
-    --color-ink: #e8e4d8;
-    --color-ink-soft: #a8a59c;
-    --color-ink-mute: #888579;
-    --color-rule: #2e3037;
-    --color-accent: #6b8a96;
-  }
-}
-
-/* ============================================================
    Base — paper canvas, optical-sized serif, selection styled in accent.
    ============================================================ */
 @layer base {
@@ -126,75 +96,6 @@
   }
   to {
     opacity: 1;
-  }
-}
-
-/* ============================================================
-   Theme toggle — View Transitions API circular reveal.
-   The toggle JS sets --theme-reveal-{x,y,r} on <html> from the
-   button's center + the farthest-corner distance, then calls
-   document.startViewTransition(applyTheme). The NEW theme wipes
-   in from that point as an expanding clip-path circle; the OLD
-   sits underneath, static (no opacity crossfade — that would
-   melt the page). Reduced-motion (and the absence of the API)
-   forces instant swap; both gates live in the toggle JS too,
-   so this CSS is dead weight in those cases, never invoked.
-   ============================================================ */
-::view-transition-old(root) {
-  animation: none;
-  mix-blend-mode: normal;
-  z-index: 1;
-}
-::view-transition-new(root) {
-  animation: theme-circle-reveal 520ms cubic-bezier(0.4, 0, 0.2, 1) both;
-  mix-blend-mode: normal;
-  z-index: 2;
-}
-@keyframes theme-circle-reveal {
-  from {
-    clip-path: circle(0 at var(--theme-reveal-x, 50vw) var(--theme-reveal-y, 50vh));
-  }
-  to {
-    clip-path: circle(
-      var(--theme-reveal-r, 150vmax) at var(--theme-reveal-x, 50vw)
-        var(--theme-reveal-y, 50vh)
-    );
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none !important;
-  }
-}
-
-/* Theme-toggle icon morph — both Sun and Moon render stacked; the
-   data-theme attribute picks which is visible. CSS-only so the
-   visible icon ALWAYS matches data-theme regardless of React's
-   hydration state (no flash, no mismatch). Rotate + scale + fade
-   together for a tactile cross-morph; suppressed under reduced-motion. */
-.theme-icon {
-  transition: opacity 280ms ease, transform 280ms ease;
-}
-[data-theme="dark"] .theme-icon--light {
-  opacity: 0;
-  transform: rotate(-90deg) scale(0.6);
-}
-[data-theme="dark"] .theme-icon--dark {
-  opacity: 1;
-  transform: rotate(0) scale(1);
-}
-[data-theme="light"] .theme-icon--light {
-  opacity: 1;
-  transform: rotate(0) scale(1);
-}
-[data-theme="light"] .theme-icon--dark {
-  opacity: 0;
-  transform: rotate(90deg) scale(0.6);
-}
-@media (prefers-reduced-motion: reduce) {
-  .theme-icon {
-    transition: none;
   }
 }
 
@@ -295,8 +196,89 @@
 }
 
 /* ============================================================
-   Hacker layer — Build A
+   Hacker layer — Build A + C
    ============================================================ */
+
+/* Hero intro overlay (`> whoami / abhimanyu_gupta`) — managed by
+   MotionChoreography GSAP timeline. Under reduced-motion the choreography
+   doesn't run AT ALL, so the intro would sit in viewport forever. Hide it. */
+@media (prefers-reduced-motion: reduce) {
+  [data-choreograph="hero-intro"] {
+    display: none;
+  }
+}
+
+/* Cursor hex trail (Build C) — small mono hex chars that drift up + fade out
+   in the wake of the cursor. The cursor.tsx client spawns one DOM node per
+   spawn-interval; the animation here owns the visual + cleanup timing. */
+.cursor-hex-trail {
+  position: fixed;
+  display: block;
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  line-height: 1;
+  color: var(--color-ink);
+  opacity: 0.4;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  /* Above section rail / theme toggle / context menu, just below the cursor
+     itself (z-200). Trail should follow the cursor over any UI surface. */
+  z-index: 180;
+  animation: cursor-hex-fade 600ms ease-out forwards;
+}
+@keyframes cursor-hex-fade {
+  0% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% - 22px)) scale(0.75);
+  }
+}
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .cursor-hex-trail {
+    display: none;
+  }
+}
+
+/* Root mode (Build C) — Konami code or the top-right Terminal button toggles
+   `html.root-mode`. All theme tokens swap to OLED-black + matrix-green; the
+   entire site re-themes via its existing token consumption. */
+:root.root-mode {
+  --color-paper: #050505;
+  --color-paper-deep: #0a0a0a;
+  --color-ink: #33ff00;
+  --color-ink-soft: #2dd200;
+  --color-ink-mute: #1d8800;
+  --color-rule: #1d8800;
+  --color-accent: #33ff00;
+}
+:root.root-mode body {
+  font-family: var(--font-mono), monospace;
+}
+
+/* Intrusion log line — types in via opacity sweep, fades on removal. */
+.intrusion-log-line {
+  animation: intrusion-log-in 600ms ease-out both;
+}
+@keyframes intrusion-log-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 0.75;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intrusion-log-line {
+    animation: none;
+    opacity: 0.75;
+  }
+}
+
 
 /* TypeOut caret — blinking block, sits inline after the typed text.
    1ch wide so it occupies one mono-character slot; --color-accent so it
@@ -316,6 +298,69 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .type-caret { animation: none; opacity: 1; }
+}
+
+/* Redacted reveal — solid bar (::after) covers the text, scan line
+   (::before) travels with the receding edge. On .revealed, the bar
+   clip-paths away left→right and the scan line sweeps off-screen. */
+.redacted {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+}
+.redacted::after {
+  content: "";
+  position: absolute;
+  inset: -0.05em -0.15em;
+  background: var(--color-ink);
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 2;
+  pointer-events: none;
+}
+/* Scan line uses `left` (not transform translateX) because translateX(100%)
+   on a 2px-wide element only moves it 2px. Animating `left` between 0 and
+   100% of the parent reliably crosses the redaction width. Animation with
+   `forwards` fill ends at opacity 0 so the line doesn't persist as a
+   vertical bar after the sweep completes — the previous transition-based
+   approach left opacity stuck at 1. */
+.redacted::before {
+  content: "";
+  position: absolute;
+  top: -0.05em;
+  bottom: -0.05em;
+  left: -0.15em;
+  width: 2px;
+  background: var(--color-accent);
+  box-shadow: 0 0 8px var(--color-accent);
+  opacity: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+.redacted.revealed::after {
+  clip-path: inset(0 0 0 100%);
+}
+.redacted.revealed::before {
+  animation: redacted-scan 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes redacted-scan {
+  0% {
+    opacity: 1;
+    left: -0.15em;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    left: calc(100% + 0.15em);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .redacted::after,
+  .redacted::before {
+    display: none;
+  }
 }
 
 /* Glitch hover — RGB-split text-shadow + tiny jitter on hover. Subtle so it

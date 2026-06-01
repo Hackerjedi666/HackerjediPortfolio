@@ -44,24 +44,84 @@ export function MotionChoreography() {
         scrollTrigger: {
           trigger: "#top",
           start: "top top",
-          end: "+=100%",
+          // Extended from +=100% to +=180% to make room for the intro
+          // overlay (`> whoami / abhimanyu_gupta`) to glitch-decay-and-lift
+          // BEFORE the masthead decode-reveal begins. Total pin spans
+          // ~1.8 viewports of scroll.
+          end: "+=180%",
           pin: true,
-          // pinSpacing default true: adds a spacer below the pinned hero so
-          // total document height accounts for the pinned distance. Without
-          // it, sections below would overlap the hero during the pin.
           scrub: 1,
-          // anticipatePin smooths the entry into pin from an upward scroll.
           anticipatePin: 1,
         },
       });
 
-      // Masthead words rise + DECODE (per-word scramble tied to each word's
-      // GSAP progress). Each word gets its own tween so onUpdate fires
-      // per-element. As user scrolls, scroll progress → tween progress →
-      // scramble resolve fraction. The hacker decode happens IN-SYNC with the
-      // rise; by the time the word is fully visible it's also fully decoded.
       const SCRAMBLE_CHARS =
         "!<>-_\\/[]{}=+*^?#$%&0123456789ABCDEF";
+
+      // ============================================================
+      // INTRO EXIT (timeline 0.3 → 0.7) — fade + lift + blur + scramble
+      // The intro container fades and lifts up as you scroll. The identity
+      // text (`abhimanyu_gupta`) scrambles to ASCII garbage during the same
+      // window. Overlaps with the masthead reveal for a crossfade handoff.
+      // ============================================================
+      const introContainer = document.querySelector<HTMLElement>(
+        '[data-choreograph="hero-intro"]'
+      );
+      const introIdentity = document.querySelector<HTMLElement>(
+        "[data-intro-identity]"
+      );
+
+      if (introContainer) {
+        tl.to(
+          introContainer,
+          {
+            opacity: 0,
+            y: -80,
+            filter: "blur(6px)",
+            duration: 0.4,
+            ease: "expo.in",
+          },
+          0.3
+        );
+      }
+
+      if (introIdentity) {
+        // Capture the resolved identity target. TypeOut has populated it
+        // by the time scroll begins (typing completes within ~1.5s of mount;
+        // user takes much longer to scroll to position 0.3 = 54vh).
+        const identityTarget = "abhimanyu_gupta";
+        tl.to(
+          introIdentity,
+          {
+            duration: 0.4,
+            ease: "none",
+            onUpdate: function () {
+              const p = this.progress();
+              let out = "";
+              for (let j = 0; j < identityTarget.length; j++) {
+                if (Math.random() < p) {
+                  const c = identityTarget[j];
+                  out +=
+                    c === "_" || c === " "
+                      ? c
+                      : SCRAMBLE_CHARS[
+                          Math.floor(Math.random() * SCRAMBLE_CHARS.length)
+                        ];
+                } else {
+                  out += identityTarget[j];
+                }
+              }
+              introIdentity.textContent = out;
+            },
+          },
+          0.3
+        );
+      }
+
+      // ============================================================
+      // MASTHEAD WORDS — shifted from position 0 → 0.5 (overlaps with the
+      // tail end of intro exit for a crossfade). Each word rises + decodes.
+      // ============================================================
       const mastheadWords = Array.from(
         document.querySelectorAll<HTMLElement>(
           '[data-choreograph="hero-masthead"] [data-word]'
@@ -103,11 +163,11 @@ export function MotionChoreography() {
               word.textContent = target;
             },
           },
-          i * 0.18
+          0.5 + i * 0.18
         );
       });
 
-      // Lede block follows the masthead in by ~50% of the timeline.
+      // Lede block — shifted from 0.7 → 1.3.
       tl.from(
         '[data-choreograph="hero-lede"]',
         {
@@ -116,10 +176,10 @@ export function MotionChoreography() {
           duration: 0.5,
           ease: "expo.out",
         },
-        0.7
+        1.3
       );
 
-      // Signature footer last — caps the cascade.
+      // Signature footer — shifted from 1.1 → 1.7.
       tl.from(
         '[data-choreograph="hero-signature"]',
         {
@@ -128,7 +188,7 @@ export function MotionChoreography() {
           duration: 0.5,
           ease: "expo.out",
         },
-        1.1
+        1.7
       );
 
       // ============================================================

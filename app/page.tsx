@@ -1,4 +1,6 @@
 import { PORTFOLIO_DATA } from "@/lib/content/portfolio-data";
+import { CryptoObject } from "@/components/crypto-object";
+import { TypeOut } from "@/components/type-out";
 import { SelectedWork } from "@/components/sections/selected-work";
 import { OpenSource } from "@/components/sections/open-source";
 import { Capabilities } from "@/components/sections/capabilities";
@@ -26,7 +28,37 @@ export default function Home() {
 
   return (
     <main className="relative z-10 min-h-screen">
-      <article id="top" className="px-3u py-12u md:px-8u md:py-18u">
+      <article id="top" className="relative px-3u py-12u md:px-8u md:py-18u">
+        {/* Intro overlay — first thing the user sees. `> whoami` types in,
+            then `abhimanyu_gupta` types under it. Fixed inset-0 so it stays
+            in viewport during the hero pin. GSAP fades + lifts + scrambles
+            it out as scroll progresses, revealing the masthead behind.
+            aria-hidden because the masthead h1 already announces identity
+            to screen readers. */}
+        <div
+          data-choreograph="hero-intro"
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 z-30 flex flex-col items-center justify-center font-mono"
+        >
+          <p
+            className="font-mono text-h2 text-ink-mute"
+            data-intro-prompt
+          >
+            <TypeOut speed={45} delay={350}>{`> whoami`}</TypeOut>
+          </p>
+          <p
+            className="mt-3u font-mono text-sub-display text-ink md:text-display"
+            data-intro-identity
+          >
+            <TypeOut speed={50} delay={1050}>abhimanyu_gupta</TypeOut>
+          </p>
+        </div>
+
+        {/* Wireframe cryptographic seal — sits in the empty right band of
+            the hero on desktop. Where a portrait would go in a magazine. */}
+        <div className="pointer-events-none absolute right-12u top-1/2 hidden -translate-y-1/2 md:block">
+          <CryptoObject />
+        </div>
         {/* Dateline — publication mark, pinned top-left. */}
         <header>
           <p className="font-mono text-caption uppercase text-ink-mute">

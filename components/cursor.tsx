@@ -3,6 +3,10 @@
 import { useEffect, useRef } from "react";
 import { getReducedMotion } from "@/lib/motion";
 
+// Hex chars for the cursor trail — reads as "scanning / hashing" rather than
+// random gibberish. Capped to 16 chars (one nibble) for that explicit hex feel.
+const HEX_TRAIL_CHARS = "0123456789ABCDEF";
+
 /**
  * Custom cursor — Lusion/Linear-style premium feel.
  *
@@ -89,12 +93,57 @@ export function Cursor() {
       }
     };
 
-    const tick = () => {
+    // Hex trail — spawn a small hex char element behind the cursor every
+    // ~70ms while moving. Each one fades + drifts up via CSS animation and
+    // self-removes after 600ms. Cap concurrent elements at 16 to avoid
+    // runaway memory if the user scrubs the mouse furiously.
+    let lastSpawn = 0;
+    let lastSpawnX = mx;
+    let lastSpawnY = my;
+    const SPAWN_INTERVAL = 70;
+    const MIN_MOVE_FOR_SPAWN = 14; // px — don't spawn when mostly idle
+    const trailNodes = new Set<HTMLSpanElement>();
+    const MAX_TRAIL = 16;
+    const spawnHex = (now: number) => {
+      if (now - lastSpawn < SPAWN_INTERVAL) return;
+      const dx = mx - lastSpawnX;
+      const dy = my - lastSpawnY;
+      if (dx * dx + dy * dy < MIN_MOVE_FOR_SPAWN * MIN_MOVE_FOR_SPAWN) return;
+      lastSpawn = now;
+      lastSpawnX = mx;
+      lastSpawnY = my;
+      // Cap concurrent: drop oldest if over the limit.
+      if (trailNodes.size >= MAX_TRAIL) {
+        const first = trailNodes.values().next().value;
+        first?.remove();
+        trailNodes.delete(first!);
+      }
+      const span = document.createElement("span");
+      span.className = "cursor-hex-trail";
+      span.textContent =
+        HEX_TRAIL_CHARS[Math.floor(Math.random() * HEX_TRAIL_CHARS.length)];
+      span.style.left = `${mx}px`;
+      span.style.top = `${my}px`;
+      document.body.appendChild(span);
+      trailNodes.add(span);
+      // The CSS animation runs 600ms; remove on animationend.
+      span.addEventListener(
+        "animationend",
+        () => {
+          span.remove();
+          trailNodes.delete(span);
+        },
+        { once: true }
+      );
+    };
+
+    const tick = (ts: number) => {
       // Lerp the ring; the dot snaps to current.
       rx += (mx - rx) * 0.18;
       ry += (my - ry) * 0.18;
       ring.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%, -50%)`;
       dot.style.transform = `translate3d(${mx}px, ${my}px, 0) translate(-50%, -50%)`;
+      spawnHex(ts);
       raf = requestAnimationFrame(tick);
     };
 
@@ -109,6 +158,9 @@ export function Cursor() {
       document.removeEventListener("pointerenter", onEnter);
       cancelAnimationFrame(raf);
       root.classList.remove("has-custom-cursor");
+      // Sweep any in-flight trail nodes
+      trailNodes.forEach((n) => n.remove());
+      trailNodes.clear();
     };
   }, []);
 
@@ -118,12 +170,12 @@ export function Cursor() {
         ref={ringRef}
         aria-hidden="true"
         data-grow="false"
-        className="cursor-ring pointer-events-none fixed left-0 top-0 z-[100] opacity-0"
+        className="cursor-ring pointer-events-none fixed left-0 top-0 z-[200] opacity-0"
       />
       <div
         ref={dotRef}
         aria-hidden="true"
-        className="cursor-dot pointer-events-none fixed left-0 top-0 z-[100] opacity-0"
+        className="cursor-dot pointer-events-none fixed left-0 top-0 z-[200] opacity-0"
       />
     </>
   );

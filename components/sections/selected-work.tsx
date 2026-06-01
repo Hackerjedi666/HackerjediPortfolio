@@ -2,6 +2,7 @@ import { PORTFOLIO_DATA } from "@/lib/content/portfolio-data";
 import { isPlaceholder } from "@/lib/utils";
 import { ScrambleText } from "@/components/scramble-text";
 import { TypeOut } from "@/components/type-out";
+import { Redacted } from "@/components/redacted";
 
 export function SelectedWork() {
   const total = PORTFOLIO_DATA.achievements.length;
@@ -109,7 +110,7 @@ export function SelectedWork() {
               <p className="mt-3u font-mono text-caption uppercase text-ink-soft">
                 {engagement.date}
                 <span className="text-ink-mute">&nbsp;&nbsp;·&nbsp;&nbsp;</span>
-                {engagement.client}
+                <Redacted>{engagement.client}</Redacted>
               </p>
               {engagement.tags.length > 0 ? (
                 <p className="mt-2u font-mono text-caption uppercase text-ink-mute">
@@ -137,7 +138,7 @@ export function SelectedWork() {
                     {engagement.anchor.label}
                   </p>
                   <p className="mt-1u font-serif text-lede text-ink">
-                    {engagement.anchor.value}
+                    <Redacted delay={150}>{engagement.anchor.value}</Redacted>
                   </p>
                   {engagement.anchor.note ? (
                     <p className="mt-2u font-mono text-caption uppercase text-ink-mute">
