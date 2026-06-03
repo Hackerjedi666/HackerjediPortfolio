@@ -42,7 +42,7 @@ export function MotionProvider() {
     const lenis = new Lenis({
       duration: 1.15,
       // Expo-out — matches the editorial decelerate ease used everywhere else
-      // (theme reveal, View Transitions). The single ease character of the site.
+      // (the single ease character of the site).
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       // Native touch momentum > library momentum on mobile. Skip touch smoothing.

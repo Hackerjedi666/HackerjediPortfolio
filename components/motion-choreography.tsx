@@ -59,16 +59,13 @@ export function MotionChoreography() {
         "!<>-_\\/[]{}=+*^?#$%&0123456789ABCDEF";
 
       // ============================================================
-      // INTRO EXIT (timeline 0.3 → 0.7) — fade + lift + blur + scramble
-      // The intro container fades and lifts up as you scroll. The identity
-      // text (`abhimanyu_gupta`) scrambles to ASCII garbage during the same
-      // window. Overlaps with the masthead reveal for a crossfade handoff.
+      // INTRO EXIT (timeline 0.3 → 0.7) — fade + lift + blur, clean
+      // The intro container (prompt + identity together) fades + lifts + blurs
+      // out as you scroll. No scramble on the identity — `abhimanyu_gupta`
+      // just rides the container's exit so it reads cleanly the whole way.
       // ============================================================
       const introContainer = document.querySelector<HTMLElement>(
         '[data-choreograph="hero-intro"]'
-      );
-      const introIdentity = document.querySelector<HTMLElement>(
-        "[data-intro-identity]"
       );
 
       if (introContainer) {
@@ -85,50 +82,54 @@ export function MotionChoreography() {
         );
       }
 
-      if (introIdentity) {
-        // Capture the resolved identity target. TypeOut has populated it
-        // by the time scroll begins (typing completes within ~1.5s of mount;
-        // user takes much longer to scroll to position 0.3 = 54vh).
-        const identityTarget = "abhimanyu_gupta";
-        tl.to(
-          introIdentity,
-          {
-            duration: 0.4,
-            ease: "none",
-            onUpdate: function () {
-              const p = this.progress();
-              let out = "";
-              for (let j = 0; j < identityTarget.length; j++) {
-                if (Math.random() < p) {
-                  const c = identityTarget[j];
-                  out +=
-                    c === "_" || c === " "
-                      ? c
-                      : SCRAMBLE_CHARS[
-                          Math.floor(Math.random() * SCRAMBLE_CHARS.length)
-                        ];
-                } else {
-                  out += identityTarget[j];
-                }
-              }
-              introIdentity.textContent = out;
-            },
-          },
-          0.3
-        );
-      }
-
       // ============================================================
-      // MASTHEAD WORDS — shifted from position 0 → 0.5 (overlaps with the
-      // tail end of intro exit for a crossfade). Each word rises + decodes.
+      // MASTHEAD WORDS — entrance (y / opacity / scale) is scrubbed to scroll
+      // for the staggered rise. The scramble decode is INDEPENDENT of scroll:
+      // when each word's GSAP entrance crosses ~5% progress (the moment it
+      // becomes visually present), a one-shot time-based RAF scramble fires
+      // and runs at its own pace — matching the ScrambleText component's
+      // behavior used throughout the rest of the sections. Once a word has
+      // fired its scramble, it never re-fires (no reverse re-scramble).
       // ============================================================
       const mastheadWords = Array.from(
         document.querySelectorAll<HTMLElement>(
           '[data-choreograph="hero-masthead"] [data-word]'
         )
       );
+
+      // Time-based left-to-right resolve scramble — same pattern as
+      // components/scramble-text.tsx, inlined here so the masthead's per-word
+      // stagger is owned by GSAP while the decode itself is owned by RAF.
+      const runWordScramble = (el: HTMLElement, target: string, duration: number) => {
+        const t0 = performance.now();
+        const len = target.length;
+        const tick = (ts: number) => {
+          const t = Math.min(1, (ts - t0) / duration);
+          const locked = Math.floor(t * len);
+          let out = "";
+          for (let j = 0; j < len; j++) {
+            if (j < locked) {
+              out += target[j];
+            } else {
+              const c = target[j];
+              out +=
+                c === " " || c === "\n" || c === "\t"
+                  ? c
+                  : SCRAMBLE_CHARS[
+                      Math.floor(Math.random() * SCRAMBLE_CHARS.length)
+                    ];
+            }
+          }
+          el.textContent = out;
+          if (t < 1) requestAnimationFrame(tick);
+          else el.textContent = target;
+        };
+        requestAnimationFrame(tick);
+      };
+
       mastheadWords.forEach((word, i) => {
         const target = word.textContent ?? "";
+        let scrambleFired = false;
         tl.from(
           word,
           {
@@ -138,29 +139,14 @@ export function MotionChoreography() {
             duration: 0.6,
             ease: "expo.out",
             onUpdate: function () {
-              const p = this.progress();
-              if (p >= 1) {
-                word.textContent = target;
-                return;
+              if (scrambleFired) return;
+              // Fire as soon as the word starts revealing into view — the
+              // scramble then plays at its own RAF clock, independent of any
+              // further scroll input (forward or reverse).
+              if (this.progress() > 0.05) {
+                scrambleFired = true;
+                runWordScramble(word, target, 700);
               }
-              let out = "";
-              for (let j = 0; j < target.length; j++) {
-                if (Math.random() < p) {
-                  out += target[j];
-                } else {
-                  const c = target[j];
-                  out +=
-                    c === " " || c === "\n" || c === "\t"
-                      ? c
-                      : SCRAMBLE_CHARS[
-                          Math.floor(Math.random() * SCRAMBLE_CHARS.length)
-                        ];
-                }
-              }
-              word.textContent = out;
-            },
-            onComplete: () => {
-              word.textContent = target;
             },
           },
           0.5 + i * 0.18
