@@ -42,9 +42,9 @@ export function RootModeToggle() {
       aria-pressed={active}
       title={active ? "Exit ROOT MODE" : "Enter ROOT MODE"}
       className="
-        group fixed right-[5rem] top-3u z-50
+        glass-chrome group fixed right-[5rem] top-3u z-50
         flex h-5u w-5u items-center justify-center
-        rounded-full border border-rule bg-paper-deep
+        rounded-full border border-rule
         text-ink-mute
         hover:border-accent hover:text-ink
         focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent

@@ -48,7 +48,8 @@ export function MotionProvider() {
       // Native touch momentum > library momentum on mobile. Skip touch smoothing.
       syncTouch: false,
       // Lenis 1.3+ intercepts <a href="#id"> clicks and routes them through
-      // its own smooth scrollTo. Falls back to native if Lenis isn't present.
+      // its own smooth scrollTo. Natural-scroll layout = sections live in
+      // document flow, so anchor jumps land correctly.
       anchors: true,
     });
 

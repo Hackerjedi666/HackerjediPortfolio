@@ -64,10 +64,13 @@ export function Cursor() {
         rx = mx;
         ry = my;
       }
-      // Detect interactive target for the magnetize state.
-      const target = e.target as HTMLElement | null;
+      // Detect interactive target for the magnetize state. Guard with
+      // instanceof Element because dispatched / synthetic pointer events
+      // can have e.target = window (no .closest method) and would throw.
+      const target = e.target;
       const interactive =
-        !!target?.closest(
+        target instanceof Element &&
+        !!target.closest(
           'a, button, [role="button"], [data-cursor-grow], input, textarea, select, summary'
         );
       if (interactive !== hoveringInteractive) {

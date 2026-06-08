@@ -2,18 +2,25 @@
 
 import { useEffect, useState } from "react";
 
-// Section list — drives both the rail's marks and the IntersectionObserver
-// scroll-spy. Order matches page.tsx top-to-bottom. IDs must match the
-// section elements' `id` attributes (all six section components already
-// declare these; `top` was added to the hero <article> in page.tsx).
-const SECTIONS: ReadonlyArray<{ id: string; label: string }> = [
-  { id: "top", label: "Top" },
-  { id: "selected-work", label: "Selected Work" },
-  { id: "open-source", label: "Open Source" },
-  { id: "capabilities", label: "Capabilities" },
-  { id: "ventures", label: "Ventures" },
-  { id: "articles", label: "Articles" },
-  { id: "contact", label: "Contact" },
+// Section list — drives both the rail's marks and the scroll-spy. The
+// `page` field is each section's index in the BookStack (set in app/page.tsx),
+// used both for anchor-click scroll targeting and for active-state tracking.
+// Interlude pages (Scope at index 2, Stance at index 5) intentionally have
+// no rail entry — the preceding section's rail mark stays active while the
+// reader is on its interlude.
+const SECTIONS: ReadonlyArray<{ id: string; label: string; page: number }> = [
+  // Page 0 is the whoami intro — "Top" returns the reader to that opening.
+  // Page 1 is the hero. Top covers both 0 and 1 because no rail entry sits
+  // between them.
+  { id: "top", label: "Top", page: 0 },
+  { id: "selected-work", label: "Selected Work", page: 2 },
+  // Scope interlude lives at page 3 (no rail entry; covered by Selected Work).
+  { id: "open-source", label: "Open Source", page: 4 },
+  { id: "capabilities", label: "Capabilities", page: 5 },
+  // Stance interlude at page 6 (covered by Capabilities).
+  { id: "ventures", label: "Ventures", page: 7 },
+  { id: "articles", label: "Articles", page: 8 },
+  { id: "contact", label: "Contact", page: 9 },
 ];
 
 // Fixed left-edge section rail. Coexists with the top-right theme toggle —
@@ -32,18 +39,17 @@ export function SectionRail() {
   const [activeId, setActiveId] = useState<string>(SECTIONS[0].id);
 
   useEffect(() => {
+    // Natural-scroll mode: IntersectionObserver across section elements with
+    // a narrow activation band (the upper-middle reading zone). Pick the
+    // latest intersecting section in document order so transitions resolve
+    // cleanly to "the section just entered."
     const order = SECTIONS.map((s) => s.id);
     const elements = SECTIONS.map((s) => document.getElementById(s.id)).filter(
       (el): el is HTMLElement => el !== null
     );
     if (elements.length === 0) return;
 
-    // Track which sections are currently in the activation band. When the
-    // band has multiple sections (transitions, or page bottomed out with a
-    // short last section), pick the LATEST one in page order — that's the
-    // section the reader has most recently entered.
     const intersecting = new Set<string>();
-
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -57,21 +63,14 @@ export function SectionRail() {
           }
         }
       },
-      {
-        // Active band: viewport y=30% to y=70% (a 40% reading zone).
-        // Width chosen so that even when the page bottoms out and a short
-        // final section (Contact ≈ 450 px on desktop) sits below mid-
-        // viewport, it still intersects. During section transitions
-        // multiple sections may share the band; the reverse-order pick
-        // above resolves cleanly to "the later section that just entered."
-        rootMargin: "-30% 0px -30% 0px",
-        threshold: 0,
-      }
+      { rootMargin: "-30% 0px -30% 0px", threshold: 0 }
     );
-
     elements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
+
+  // Anchor click → let Lenis handle it via anchors:true. Falls through to
+  // native browser behavior in non-Lenis paths. No JS handler needed here.
 
   return (
     <nav

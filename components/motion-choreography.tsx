@@ -30,10 +30,16 @@ import { getReducedMotion } from "@/lib/motion";
  *     while the section-rail's IntersectionObserver still tracks correctly
  *     (sections below the pin scroll into view normally).
  */
+// REVERT FLAG: set USE_BOOK_STACK = true to bypass this choreography (the
+// BookStack scroll-pin owns it instead). false = original scroll-tied hero
+// pin and per-section scrubbed reveals are active.
+const USE_BOOK_STACK = false;
+
 export function MotionChoreography() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (getReducedMotion()) return;
+    if (USE_BOOK_STACK) return; // BookStack owns pin + reveals when enabled
 
     const ctx = gsap.context(() => {
       // ============================================================

@@ -222,10 +222,18 @@ export function HeroCanvas() {
     let prevTs = start;
     let lastRender = 0;
     let visible = true;
+    let scrolledPastHero = false;
     const onVis = () => {
       visible = !document.hidden;
     };
+    // Additional gate: pause rendering once the reader has scrolled past the
+    // first two pages of the book (≥ 2 viewports of scroll). At that point
+    // the canvas has rotated out of view and rendering it is pure waste.
+    const onScroll = () => {
+      scrolledPastHero = window.scrollY > window.innerHeight * 2;
+    };
     document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     // Target ~30fps for the canvas. The shader is slow ambient noise — 60fps
     // is imperceptible against 30fps for this kind of motion, and halving the
@@ -235,7 +243,7 @@ export function HeroCanvas() {
     const TARGET_FRAME_MS = 1000 / 30;
 
     const tick = (ts: number) => {
-      if (visible) {
+      if (visible && !scrolledPastHero) {
         const dt = Math.min(0.05, (ts - prevTs) / 1000);
         prevTs = ts;
         // Mouse + time + color lerps update every frame so they stay smooth.
@@ -270,6 +278,7 @@ export function HeroCanvas() {
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onMove);
       document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("scroll", onScroll);
       observer.disconnect();
       if (gl.canvas.parentElement === container) {
         container.removeChild(gl.canvas);

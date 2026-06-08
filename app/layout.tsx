@@ -10,6 +10,7 @@ import { ScrollProgress } from "@/components/scroll-progress";
 import { RootMode } from "@/components/root-mode";
 import { RootModeToggle } from "@/components/root-mode-toggle";
 import { IntrusionLog } from "@/components/intrusion-log";
+import { CursorMagnet } from "@/components/cursor-magnet";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -45,6 +46,7 @@ export default function RootLayout({
         <RootModeToggle />
         <SectionRail />
         <IntrusionLog />
+        <CursorMagnet />
         {children}
       </body>
     </html>

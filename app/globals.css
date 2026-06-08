@@ -430,3 +430,44 @@
     background-color: var(--color-ink-mute);
   }
 }
+
+/* ============================================================
+   Book stack page-turn UX (components/book/book-stack.tsx).
+   Each .book-page contains a .book-page-scroll inner container that
+   accepts native scroll for tall content; we hide its scrollbar so the
+   page reads as paper, not as a UI surface. overscroll-behavior:contain
+   prevents the bottom-of-page scroll from triggering window scroll-chain
+   into the timeline before the user's last wheel input.
+   ============================================================ */
+.book-page-scroll,
+.book-flip-page {
+  scrollbar-width: none; /* Firefox */
+}
+.book-page-scroll::-webkit-scrollbar,
+.book-flip-page::-webkit-scrollbar {
+  display: none; /* WebKit */
+}
+
+/* ============================================================
+   Glass chrome — premium "floating UI" layer effect. Any element with
+   `.glass-chrome` gets a frosted-glass backdrop: backdrop-blur over a
+   semi-opaque background, slight saturation boost so the colors behind
+   read warmer. Used for the terminal button, ROOT MODE toggle, section
+   rail, intrusion log — all the fixed-position chrome that floats over
+   the OGL ambient canvas.
+   ============================================================ */
+.glass-chrome {
+  background: rgba(19, 20, 26, 0.55);
+  -webkit-backdrop-filter: blur(14px) saturate(135%);
+  backdrop-filter: blur(14px) saturate(135%);
+}
+:root.root-mode .glass-chrome {
+  background: rgba(10, 10, 10, 0.55);
+}
+@supports not (backdrop-filter: blur(1px)) {
+  /* No backdrop-filter support: fall back to opaque paper-deep so the
+     button is still readable. */
+  .glass-chrome {
+    background: var(--color-paper-deep);
+  }
+}

@@ -2,6 +2,8 @@ import { PORTFOLIO_DATA } from "@/lib/content/portfolio-data";
 import { isPlaceholder } from "@/lib/utils";
 import { ScrambleText } from "@/components/scramble-text";
 import { TypeOut } from "@/components/type-out";
+import { Redacted } from "@/components/redacted";
+import { MarginObject } from "@/components/margin-object";
 
 // Editorial date format — "18 NOV 2025". Distinct from Selected Work's
 // year-only date and from any prose date — looks like a newspaper dateline.
@@ -40,8 +42,13 @@ export function Articles() {
     <section
       id="articles"
       aria-labelledby="articles-heading"
-      className="px-3u py-18u md:px-8u"
+      className="relative px-3u py-18u md:px-8u"
     >
+      {/* Floating wireframe satellite — icosahedron echoes the hero's
+          cryptographic seal. */}
+      <div className="pointer-events-none absolute right-8u top-18u hidden md:block">
+        <MarginObject shape="icosahedron" size={200} />
+      </div>
       {/* Section header — same grammar as the rest. Eyebrow uses "Field Notes"
           (a writer's ongoing observation log) rather than the data noun
           "Articles", to flavor the genre. h2 stays "Articles" — neutral and
@@ -54,9 +61,10 @@ export function Articles() {
           </p>
           <h2
             id="articles-heading"
+            data-cursor-magnet
             className="mt-3u font-serif text-h2 text-balance text-ink"
           >
-            <ScrambleText>Articles</ScrambleText>
+            <Redacted>Articles</Redacted>
           </h2>
           <p className="mt-5u max-w-[52ch] font-serif text-lede text-ink-soft">
             Research notes on offensive security and trusted-execution work.
@@ -81,6 +89,7 @@ export function Articles() {
         <div
           tabIndex={0}
           data-lenis-prevent
+          data-no-flip
           aria-label={`Article list — ${total} entries, scrollable`}
           className="articles-scroll col-span-12 md:col-span-9 md:col-start-3"
         >

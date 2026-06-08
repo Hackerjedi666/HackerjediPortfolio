@@ -127,13 +127,13 @@ The custom cursor (`cursor.tsx`) is mounted globally but bails on `pointer: coar
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000 (Turbopack)
+npm run dev      # http://localhost:3030 (Turbopack)
 npm run build    # full prerender to .next/server/app/
 npm run start    # serves the production build
 npm run lint
 ```
 
-Requires Node 18.17+ (Next 16 requirement). The dev server listens on `0.0.0.0:3000` so iPhones/iPads on the same LAN can hit `http://<your-ip>:3000` — add your machine's LAN IP to `allowedDevOrigins` in `next.config.ts`.
+Requires Node 18.17+ (Next 16 requirement). The dev server listens on `0.0.0.0:3030` so iPhones/iPads on the same LAN can hit `http://<your-ip>:3030` — add your machine's LAN IP to `allowedDevOrigins` in `next.config.ts`.
 
 ## Scripts
 

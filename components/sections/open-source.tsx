@@ -1,6 +1,6 @@
 import { PORTFOLIO_DATA, type ProjectType } from "@/lib/content/portfolio-data";
-import { ScrambleText } from "@/components/scramble-text";
 import { TypeOut } from "@/components/type-out";
+import { Redacted } from "@/components/redacted";
 
 // Mono tag labels — keep punctuation-clean since they're rendered uppercase
 // with letter-spacing via the caption type-token. Record over the union so
@@ -42,9 +42,10 @@ export function OpenSource() {
           </p>
           <h2
             id="open-source-heading"
+            data-cursor-magnet
             className="mt-3u font-serif text-h2 text-balance text-ink"
           >
-            <ScrambleText>Open Source</ScrambleText>
+            <Redacted>Open Source</Redacted>
           </h2>
           <p className="mt-5u max-w-[52ch] font-serif text-lede text-ink-soft">
             Public artifacts shipped alongside engagements — recon pipelines,

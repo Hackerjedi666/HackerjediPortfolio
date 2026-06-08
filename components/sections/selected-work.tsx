@@ -3,6 +3,7 @@ import { isPlaceholder } from "@/lib/utils";
 import { ScrambleText } from "@/components/scramble-text";
 import { TypeOut } from "@/components/type-out";
 import { Redacted } from "@/components/redacted";
+import { MarginObject } from "@/components/margin-object";
 
 export function SelectedWork() {
   const total = PORTFOLIO_DATA.achievements.length;
@@ -16,8 +17,13 @@ export function SelectedWork() {
     <section
       id="selected-work"
       aria-labelledby="selected-work-heading"
-      className="px-3u py-18u md:px-8u"
+      className="relative px-3u py-18u md:px-8u"
     >
+      {/* Floating wireframe satellite — sits in the empty right band of
+          the section. Rotates slowly + tilts toward cursor. */}
+      <div className="pointer-events-none absolute right-8u top-18u hidden md:block">
+        <MarginObject shape="cube" size={200} />
+      </div>
       {/* Section header — same grammar as hero: mono eyebrow + serif h2. */}
       <div className="grid grid-cols-12 gap-x-3u">
         <header className="col-span-12 md:col-span-9 md:col-start-3">
@@ -26,9 +32,10 @@ export function SelectedWork() {
           </p>
           <h2
             id="selected-work-heading"
+            data-cursor-magnet
             className="mt-3u font-serif text-h2 text-balance text-ink"
           >
-            <ScrambleText>Selected Work</ScrambleText>
+            <Redacted>Selected Work</Redacted>
           </h2>
 
           {/* Section-level disclosure exhibit. Independent research credential,
@@ -155,7 +162,7 @@ export function SelectedWork() {
                 id={`${engagement.id}-heading`}
                 className="font-serif text-h2 text-balance text-ink"
               >
-                <ScrambleText>{engagement.title}</ScrambleText>
+                <Redacted>{engagement.title}</Redacted>
               </h3>
               <p className="mt-5u font-serif text-body text-ink-soft">
                 {engagement.problem}

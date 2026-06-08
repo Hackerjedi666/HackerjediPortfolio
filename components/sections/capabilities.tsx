@@ -1,6 +1,7 @@
 import { PORTFOLIO_DATA } from "@/lib/content/portfolio-data";
-import { ScrambleText } from "@/components/scramble-text";
 import { TypeOut } from "@/components/type-out";
+import { Redacted } from "@/components/redacted";
+import { MarginObject } from "@/components/margin-object";
 
 export function Capabilities() {
   const capabilities = PORTFOLIO_DATA.capabilities;
@@ -15,8 +16,13 @@ export function Capabilities() {
     <section
       id="capabilities"
       aria-labelledby="capabilities-heading"
-      className="px-3u py-18u md:px-8u"
+      className="relative px-3u py-18u md:px-8u"
     >
+      {/* Floating wireframe satellite — octahedron for the 4-quadrant
+          atlas register. */}
+      <div className="pointer-events-none absolute right-8u top-18u hidden md:block">
+        <MarginObject shape="octahedron" size={200} />
+      </div>
       {/* Section header — same grammar as Selected Work and Open Source.
           Lede frames the altitude explicitly so the section announces its
           role: the standing competence the engagements draw from, not a
@@ -28,9 +34,10 @@ export function Capabilities() {
           </p>
           <h2
             id="capabilities-heading"
+            data-cursor-magnet
             className="mt-3u font-serif text-h2 text-balance text-ink"
           >
-            <ScrambleText>Capabilities</ScrambleText>
+            <Redacted>Capabilities</Redacted>
           </h2>
           <p className="mt-5u max-w-[52ch] font-serif text-lede text-ink-soft">
             Four standing domains the engagements draw from. The cases prove

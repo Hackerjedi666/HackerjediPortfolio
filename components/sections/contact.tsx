@@ -1,5 +1,6 @@
 import { PORTFOLIO_DATA } from "@/lib/content/portfolio-data";
-import { ScrambleText } from "@/components/scramble-text";
+import { Redacted } from "@/components/redacted";
+import { ContactPlayable } from "@/components/contact-playable";
 
 // FLAGGED FOR OWNER EDIT — the closing statement, the last voice the
 // reader hears. Sized at text-h2 alongside the email; together they form
@@ -19,9 +20,13 @@ export function Contact() {
     <section
       id="contact"
       aria-labelledby="contact-heading"
-      className="px-3u pt-18u pb-5u md:px-8u"
+      className="relative px-3u pt-18u pb-5u md:px-8u"
     >
-      <div className="grid grid-cols-12 gap-x-3u">
+      {/* Cursor-reactive hex-character particle field — sits behind the
+          content (pointer-events:none so the mailto link stays clickable). */}
+      <ContactPlayable />
+
+      <div className="relative z-10 grid grid-cols-12 gap-x-3u">
         <div className="col-span-12 md:col-span-9 md:col-start-3">
           {/* CLOSING STATEMENT — the section's h2 semantically and visually,
               styled as the closing voice rather than a label heading. The
@@ -29,9 +34,10 @@ export function Contact() {
               tag without needing a separate sr-only label. */}
           <h2
             id="contact-heading"
+            data-cursor-magnet
             className="font-serif text-h2 text-balance text-ink"
           >
-            <ScrambleText duration={900}>{CLOSING_STATEMENT}</ScrambleText>
+            <Redacted>{CLOSING_STATEMENT}</Redacted>
           </h2>
 
           {/* EMAIL — the single primary action, the visual anchor. Same
@@ -43,6 +49,7 @@ export function Contact() {
               here at full serif weight, not just "email me" as a label. */}
           <a
             href={`mailto:${email}`}
+            data-cursor-magnet
             className="group mt-5u inline-block break-words font-serif text-h2 text-balance text-ink"
           >
             <span className="glitch-hover underline decoration-rule underline-offset-4 group-hover:decoration-accent">
