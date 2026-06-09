@@ -42,7 +42,7 @@ export function Articles() {
     <section
       id="articles"
       aria-labelledby="articles-heading"
-      className="relative px-3u py-18u md:px-8u"
+      className="relative px-3u py-12u md:px-8u md:py-18u"
     >
       {/* Floating wireframe satellite — icosahedron echoes the hero's
           cryptographic seal. */}

@@ -17,7 +17,7 @@ export function SelectedWork() {
     <section
       id="selected-work"
       aria-labelledby="selected-work-heading"
-      className="relative px-3u py-18u md:px-8u"
+      className="relative px-3u py-12u md:px-8u md:py-18u"
     >
       {/* Floating wireframe satellite — sits in the empty right band of
           the section. Rotates slowly + tilts toward cursor. */}

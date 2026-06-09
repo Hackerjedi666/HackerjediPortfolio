@@ -20,7 +20,7 @@ export function Contact() {
     <section
       id="contact"
       aria-labelledby="contact-heading"
-      className="relative px-3u pt-18u pb-5u md:px-8u"
+      className="relative px-3u pt-12u pb-5u md:px-8u md:pt-18u"
     >
       {/* Cursor-reactive hex-character particle field — sits behind the
           content (pointer-events:none so the mailto link stays clickable). */}

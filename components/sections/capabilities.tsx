@@ -16,7 +16,7 @@ export function Capabilities() {
     <section
       id="capabilities"
       aria-labelledby="capabilities-heading"
-      className="relative px-3u py-18u md:px-8u"
+      className="relative px-3u py-12u md:px-8u md:py-18u"
     >
       {/* Floating wireframe satellite — octahedron for the 4-quadrant
           atlas register. */}

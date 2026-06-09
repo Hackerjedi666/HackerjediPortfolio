@@ -45,7 +45,7 @@ export default function Home() {
         <p className="font-mono text-h2 text-ink-mute">
           <TypeOut speed={45} delay={350}>{`> whoami`}</TypeOut>
         </p>
-        <p className="mt-3u font-mono text-sub-display text-ink md:text-display">
+        <p className="mt-3u break-words text-center font-mono text-h2 text-ink sm:text-sub-display md:text-display">
           <TypeOut speed={50} delay={1050}>
             abhimanyu_gupta
           </TypeOut>

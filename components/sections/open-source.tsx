@@ -30,7 +30,7 @@ export function OpenSource() {
     <section
       id="open-source"
       aria-labelledby="open-source-heading"
-      className="px-3u py-18u md:px-8u"
+      className="px-3u py-12u md:px-8u md:py-18u"
     >
       {/* Section header — same grammar as Selected Work: mono eyebrow + serif
           h2 + lede paragraph, then a mono data-line that quantifies the

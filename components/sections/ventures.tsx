@@ -27,7 +27,7 @@ export function Ventures() {
     <section
       id="ventures"
       aria-labelledby="ventures-heading"
-      className="px-3u py-18u md:px-8u"
+      className="px-3u py-12u md:px-8u md:py-18u"
     >
       {/* Section header — same eyebrow + h2 grammar as the rest. The lede is
           the connective device: a single sentence that names the relationship

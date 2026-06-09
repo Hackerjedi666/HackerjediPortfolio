@@ -32,7 +32,7 @@ export function StanceInterlude() {
           >
             <span
               aria-hidden="true"
-              className="absolute -left-5u top-0 text-display text-ink-mute md:-left-8u"
+              className="absolute -left-2u top-0 text-sub-display text-ink-mute md:-left-8u md:text-display"
             >
               &ldquo;
             </span>
