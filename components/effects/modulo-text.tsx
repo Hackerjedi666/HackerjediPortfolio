@@ -257,11 +257,16 @@ export function ModuloText({ text, className, fontSize = 68 }: Props) {
     };
   }, [active, text, fontSize]);
 
-  // Reduced motion (or no canvas): render the address as real type. Without
-  // this the canvas would sit there un-built — a blank block where the only
-  // copy of the email is an sr-only span, i.e. invisible to a sighted user
-  // who happens to have reduced motion on.
-  if (tier === "static") {
+  // Plain type on anything that isn't a full-tier pointer device.
+  //
+  // Two separate reasons, both decisive:
+  //   - "static" (reduced motion): the canvas would never be built, leaving a
+  //     blank block whose only copy of the address is an sr-only span.
+  //   - "lite" (touch): this is a *pointer* effect. With no cursor to scatter
+  //     the cells it does nothing at all, while the type ramp squeezes the
+  //     address into ~7 cell rows at phone widths — unreadable, in exchange
+  //     for an interaction that device cannot perform.
+  if (tier !== "full") {
     return (
       <div className={className}>
         <span

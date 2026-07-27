@@ -41,7 +41,7 @@ export function SiteFooter() {
               href={l.href}
               external
               strength={26}
-              className="inline-block transition-colors hover:text-acid"
+              className="inline-flex min-h-11 items-center transition-colors hover:text-acid"
             >
               {l.label}
             </MagneticLink>

@@ -9,7 +9,7 @@ export function Hero() {
     <section
       id="top"
       aria-label="Introduction"
-      className="relative z-[1] flex min-h-dvh flex-col border-b border-hairline px-gutter pb-10 pt-30"
+      className="relative z-[1] flex min-h-dvh flex-col border-b border-hairline px-gutter pb-10 pt-24 sm:pt-30"
     >
       {/* ── FLUID REGION ──────────────────────────────────────────────
           Everything above the rule. `flex-1` makes this stretch to fill

@@ -31,7 +31,7 @@ export function CopyEmail({ email }: { email: string }) {
     <button
       type="button"
       onClick={copy}
-      className="mb-9 inline-flex min-h-11 items-center gap-2.5 text-micro tracking-[0.16em] text-ink-label transition-colors hover:text-acid"
+      className="mb-9 inline-flex min-h-11 items-center gap-2.5 py-2 text-micro tracking-[0.16em] text-ink-label transition-colors hover:text-acid"
     >
       {copied ? (
         <Check size={13} strokeWidth={1.75} aria-hidden="true" className="text-acid" />

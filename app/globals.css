@@ -502,6 +502,13 @@ html.boot-seen .boot {
   clip-path: inset(0% 100% 0% 0%);
   will-change: clip-path;
 }
+/* Portrait below md, matching the tall graph layout in attack-path.tsx.
+   A 16:7 letterbox at phone width is 145px tall — no diagram survives that. */
+@media (max-width: 47.99em) {
+  .expand-panel {
+    aspect-ratio: 5 / 6;
+  }
+}
 .expand-panel-inner {
   display: block;
   width: 100%;
@@ -706,6 +713,21 @@ html.boot-seen .boot {
     rgba(255, 174, 61, 0.05) 0 1px,
     transparent 1px 3px
   );
+}
+
+/* ============================================================
+   Small-screen legibility floor.
+
+   The design's micro label is 10px — fine on a desktop monitor at reading
+   distance, genuinely hard on a phone held at arm's length, and these carry
+   real content (op tags, stat captions, kill-chain phases). Lifting the two
+   smallest steps only below md leaves the desktop composition untouched.
+   ============================================================ */
+@media (max-width: 47.99em) {
+  :root {
+    --text-micro: 0.6875rem; /* 10 → 11 */
+    --text-label: 0.75rem; /* 11 → 12 */
+  }
 }
 
 /* ============================================================

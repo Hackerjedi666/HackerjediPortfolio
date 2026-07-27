@@ -137,9 +137,13 @@ export function Shell() {
             </span>
           </div>
 
+          {/* Viewport-relative, not a fixed 440px. On a landscape phone
+              (375px tall) a fixed height made the terminal taller than the
+              screen, so the prompt and its output could never be seen at
+              once. Clamped so it still reads as a terminal on a desktop. */}
           <div
             ref={bodyRef}
-            className="h-[440px] overflow-y-auto p-4.5 text-sm"
+            className="h-[clamp(220px,55dvh,440px)] overflow-y-auto p-4.5 text-sm"
           >
             <div aria-live="polite" aria-atomic="false">
               {lines.map((line, i) => (

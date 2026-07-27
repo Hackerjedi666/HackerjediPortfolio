@@ -61,7 +61,7 @@ export function SiteNav() {
         <a
           href="#top"
           aria-label="Back to top"
-          className="-my-2 flex min-h-11 items-center gap-2.5 py-2 text-ink"
+          className="-my-2 -ml-2 flex min-h-11 items-center gap-2.5 py-2 pl-2 text-ink"
         >
           <span className="grid h-[30px] w-[30px] flex-none place-items-center border border-acid font-display text-[13px] font-bold text-acid">
             AG
