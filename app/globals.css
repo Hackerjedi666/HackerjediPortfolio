@@ -1,473 +1,751 @@
 @import "tailwindcss";
 
 /* ============================================================
-   DESIGN SYSTEM — editorial minimal, paper & ink.
-   Tokens here are the only language sections may speak in.
-   Dark-only — light theme removed; root-mode (terminal green/black)
-   is the only alternate palette.
-   Token NAMES never change — sections consume names, never raw values.
+   DESIGN SYSTEM — "HACKERJEDI TERMINAL"
+   Black canvas, one acid accent, two faces. Every section speaks
+   only in these tokens; raw hex never appears in a component.
+
+   Palette source: the redesign spec.
+     background #000 · panel #0a0a0a · hairline #141414 / #1e1e1e
+     text #f2f2f2 · body #8c8c8c · labels #7a7a7a · accent #c2ff45
    ============================================================ */
 @theme {
-  /* ---------- Palette: DARK (the only mode), one accent ---------- */
-  --color-paper: #030307;        /* near-black with a whisper of cool tint — premium, not pure #000 */
-  --color-paper-deep: #0a0b0f;   /* surface step — still distinguishable so the hero shader keeps depth */
-  --color-ink: #e8e4d8;          /* warm bone primary — never #fff */
-  --color-ink-soft: #a8a59c;     /* mid-light secondary, ≥8:1 vs paper */
-  --color-ink-mute: #888579;     /* dimmer caption gray, ≥5:1 vs paper */
-  --color-rule: #2e3037;         /* slightly cooler hairline against the deeper paper */
-  --color-accent: #6b8a96;       /* desaturated steel-cyan, status-LED — never electric */
+  /* ---------- Surfaces (darkest → lightest) ---------- */
+  --color-void: #000000;         /* page canvas */
+  --color-pit: #050505;          /* terminal / deepest card */
+  --color-panel: #0a0a0a;        /* standard card surface */
+  --color-panel-hi: #101010;     /* card hover surface */
+  --color-hairline: #141414;     /* structural rule — section edges */
+  --color-line: #1a1a1a;         /* card border, resting */
+  --color-line-hi: #1e1e1e;      /* brighter rule — chips, dividers */
+  --color-line-lift: #2e2e2e;    /* card border, hover */
 
-  /* ---------- Type: two faces, no sans ---------- */
-  --font-serif: var(--font-fraunces);
-  --font-mono: var(--font-jetbrains-mono);
+  /* ---------- Ink (brightest → dimmest) ---------- */
+  --color-ink: #f2f2f2;          /* headlines, primary text */
+  --color-ink-soft: #c8c8c8;     /* emphasised body (accent cards) */
+  --color-ink-body: #8c8c8c;     /* body copy — 6.2:1 on void */
+  --color-ink-label: #7a7a7a;    /* eyebrows, meta — 4.9:1 on void */
+  /* The spec's #6f6f6f and #4a4a4a both land under WCAG AA on pure black
+     (4.2:1 and 2.4:1). Lifted to the nearest values that clear AA for their
+     size class — 4.6:1 for body-size detail, 3.1:1 for the large ghosted
+     headline clause. Visually indistinguishable, legally not. */
+  --color-ink-dim: #767676;      /* tertiary detail — 4.6:1 on void */
+  --color-ink-ghost: #5c5c5c;    /* headline second clause — 3.1:1, large text only */
 
-  /* ---------- Modular type scale, dramatic contrast (11px → 80px) ---------- */
-  --text-caption: 0.6875rem;             /* 11 — datelines, signatures, eyebrows */
-  --text-caption--line-height: 1.4;
-  --text-caption--letter-spacing: 0.18em;
+  /* ---------- Accent — one, and only one ----------
+     Root mode (konami) re-points --color-acid at amber; every acid
+     surface in the site re-themes for free because nothing hardcodes it. */
+  --color-acid: #c2ff45;
+  --color-acid-ink: #000000;     /* text ON an acid fill */
 
-  --text-body-sm: 0.875rem;              /* 14 — small notes, the temp dump */
-  --text-body-sm--line-height: 1.55;
+  /* ---------- Type: display + mono, nothing else ---------- */
+  --font-display: var(--font-chakra-petch), "Chakra Petch", ui-sans-serif, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", monospace;
 
-  --text-body: 1.0625rem;                /* 17 — body */
-  --text-body--line-height: 1.6;
+  /* ---------- Scale ----------
+     Mono UI text sits on a tight 10→15px ladder; display headlines are
+     fluid so the hero fills any viewport without a media query. */
+  --text-micro: 0.625rem;                 /* 10 — stat captions, timeline meta */
+  --text-micro--line-height: 1.5;
+  --text-micro--letter-spacing: 0.22em;
 
-  --text-lede: 1.3125rem;                /* 21 — long-form lede / stance */
-  --text-lede--line-height: 1.5;
+  --text-label: 0.6875rem;                /* 11 — eyebrows, nav, buttons */
+  --text-label--line-height: 1.5;
+  --text-label--letter-spacing: 0.2em;
 
-  --text-h2: 2.25rem;                    /* 36 — section + signed name */
-  --text-h2--line-height: 1.1;
-  --text-h2--letter-spacing: -0.01em;
+  --text-chip: 0.75rem;                   /* 12 — tags, terminal hints */
+  --text-chip--line-height: 1.5;
+  --text-chip--letter-spacing: 0.12em;
 
-  --text-sub-display: 3.5rem;            /* 56 — mobile masthead */
-  --text-sub-display--line-height: 1.02;
-  --text-sub-display--letter-spacing: -0.015em;
+  --text-sm: 0.8125rem;                   /* 13 — terminal body, dense copy */
+  --text-sm--line-height: 1.7;
 
-  --text-display: 5rem;                  /* 80 — desktop masthead */
-  --text-display--line-height: 1.0;
-  --text-display--letter-spacing: -0.02em;
+  --text-body: 0.9375rem;                 /* 15 — body copy */
+  --text-body--line-height: 1.75;
 
-  /* ---------- Spacing: 8px base, named in editorial "units" ---------- */
-  --spacing-1u: 0.5rem;    /* 8  — hairline gap */
-  --spacing-2u: 1rem;      /* 16 — line gap */
-  --spacing-3u: 1.5rem;    /* 24 — paragraph */
-  --spacing-5u: 2.5rem;    /* 40 — subsection */
-  --spacing-8u: 4rem;      /* 64 — section */
-  --spacing-12u: 6rem;     /* 96 — major section */
-  --spacing-18u: 9rem;     /* 144 — masthead breathing */
+  --text-stat: 1.875rem;                  /* 30 — hero counters */
+  --text-stat--line-height: 1;
+  --text-stat--letter-spacing: -0.02em;
+
+  --text-h4: 1.3125rem;                   /* 21 — capability + anchor titles */
+  --text-h4--line-height: 1.2;
+  --text-h4--letter-spacing: -0.01em;
+
+  --text-h3: 1.5rem;                      /* 24 — kill-chain step titles */
+  --text-h3--line-height: 1.15;
+  --text-h3--letter-spacing: -0.015em;
+
+  --text-card: clamp(1.5rem, 3.4vw, 2.5rem);      /* 24→40 — op titles */
+  --text-card--line-height: 1.04;
+  --text-card--letter-spacing: -0.02em;
+
+  --text-venture: clamp(1.75rem, 3.6vw, 2.75rem); /* 28→44 — venture names */
+  --text-venture--line-height: 1;
+  --text-venture--letter-spacing: -0.02em;
+
+  --text-h2: clamp(2.125rem, 5.6vw, 4.75rem);     /* 34→76 — section heads */
+  --text-h2--line-height: 0.94;
+  --text-h2--letter-spacing: -0.025em;
+
+  --text-h1: clamp(2.875rem, 10.5vw, 10.5rem);    /* 46→168 — hero */
+  --text-h1--line-height: 0.88;
+  --text-h1--letter-spacing: -0.03em;
+
+  /* ---------- Spacing — 4px rhythm, named by role ---------- */
+  --spacing-gutter: 1.375rem;    /* 22 — page inset */
+  --spacing-section: 10rem;      /* 160 — section vertical padding */
+
+  /* ---------- Motion ---------- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
 }
 
 /* ============================================================
-   Base — paper canvas, optical-sized serif, selection styled in accent.
+   Base
    ============================================================ */
 @layer base {
+  * {
+    min-width: 0;
+  }
   html {
-    background: var(--color-paper);
+    background: var(--color-void);
     color: var(--color-ink);
+    scroll-behavior: smooth;
+    /* Fixed nav is 57px tall; anchored sections land clear of it. */
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
   }
   body {
-    font-family: var(--font-serif), "Iowan Old Style", Georgia, serif;
+    font-family: var(--font-mono);
     font-size: var(--text-body);
-    line-height: 1.6;
-    font-optical-sizing: auto;
+    line-height: 1.75;
+    overflow-x: hidden;
+    /* Containing block for the full-document trace line — `absolute inset-0`
+       on a child then spans the whole page rather than the viewport. */
+    position: relative;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-wrap: balance;
   }
   ::selection {
-    background: var(--color-accent);
-    color: var(--color-paper);
+    background: var(--color-acid);
+    color: var(--color-acid-ink);
   }
-
-  /* One subtle, opacity-only reveal on page mount. No transforms. */
-  main {
-    animation: editorial-rise 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* Keyboard focus must survive the custom cursor — it is the only
+     affordance a keyboard user gets. Never remove it. */
+  :focus-visible {
+    outline: 2px solid var(--color-acid);
+    outline-offset: 3px;
   }
-  @media (prefers-reduced-motion: reduce) {
-    main {
-      animation: none;
-    }
+  ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-void);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-line-hi);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-acid);
   }
 }
 
-@keyframes editorial-rise {
-  from {
-    opacity: 0;
+/* ============================================================
+   Layout primitives
+   ============================================================ */
+@layer components {
+  /* Content column. `--shell-w` lets a section widen itself (hero,
+     ventures and research run to 1240; the reading sections to 1180). */
+  .shell {
+    width: 100%;
+    max-width: var(--shell-w, 73.75rem); /* 1180 */
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
   }
-  to {
-    opacity: 1;
+  .shell-wide {
+    --shell-w: 77.5rem; /* 1240 */
+  }
+
+  .section {
+    position: relative;
+    z-index: 1;
+    padding-block: clamp(5rem, 12vw, var(--spacing-section));
+  }
+
+  /* Section eyebrow: "01 // SELECTED OPS ————————" */
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 1.125rem;
+  }
+  .eyebrow::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--color-line);
+  }
+
+  /* ---------- Buttons ----------
+     One shape, three weights. 48px min height clears the 44px touch
+     target floor on every breakpoint without a mobile override. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding-inline: 1.375rem;
+    font-size: var(--text-label);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    white-space: nowrap;
+    transition:
+      transform 160ms ease,
+      background-color 200ms ease,
+      border-color 200ms ease,
+      color 200ms ease,
+      box-shadow 200ms ease;
+  }
+  .btn-acid {
+    background: var(--color-acid);
+    color: var(--color-acid-ink);
+  }
+  .btn-acid:hover {
+    box-shadow: 0 10px 34px color-mix(in srgb, var(--color-acid) 22%, transparent);
+  }
+  .btn-outline {
+    border: 1px solid var(--color-acid);
+    color: var(--color-acid);
+  }
+  .btn-outline:hover {
+    background: var(--color-acid);
+    color: var(--color-acid-ink);
+  }
+  .btn-ghost {
+    border: 1px solid var(--color-line-hi);
+    color: var(--color-ink);
+  }
+  .btn-ghost:hover {
+    border-color: var(--color-acid);
+    color: var(--color-acid);
+  }
+
+  /* Bordered micro-label used for tags and the toolbelt row. */
+  .chip {
+    display: inline-block;
+    border: 1px solid var(--color-line-hi);
+    padding: 0.4375rem 0.625rem;
+    font-size: var(--text-micro);
+    letter-spacing: 0.14em;
+    color: var(--color-ink-dim);
   }
 }
 
 /* ============================================================
-   Section rail — smooth scroll handled by Lenis in MotionProvider
-   (Phase 1 of the premium motion rebuild). The previous
-   `html { scroll-behavior: smooth }` rule was removed because it
-   fought with Lenis's own scroll interpolation. When Lenis is OFF
-   (reduced-motion path), anchor clicks fall through to native
-   instant jump — which is the correct reduced-motion behavior.
-   ============================================================ */
+   Reveal choreography — scroll-driven, zero JS.
 
-/* Anchor landing margin — sections already have py-18u internal
-   padding, so the title sits well below the section's outer edge.
-   A small scroll-margin keeps the section's outer edge from butting
-   the viewport's top when jumped to. */
-#top,
-#selected-work,
-#open-source,
-#capabilities,
-#ventures,
-#articles,
-#contact {
-  scroll-margin-top: var(--spacing-3u);
+   Browsers with `animation-timeline: view()` scrub these as the element
+   enters. Browsers without it ignore the timeline property and simply
+   play the animation once on load, so content always ends up visible —
+   the failure mode is "no scroll effect", never "invisible content".
+   ============================================================ */
+@layer utilities {
+  .reveal,
+  .reveal-sm,
+  .reveal-fade,
+  .reveal-slide {
+    animation-duration: 900ms;
+    animation-timing-function: var(--ease-out-expo);
+    animation-fill-mode: both;
+    animation-timeline: view();
+    animation-range: entry 2% cover 28%;
+  }
+  .reveal { animation-name: rise; }
+  .reveal-sm { animation-name: rise-sm; }
+  .reveal-fade { animation-name: fade-in; animation-timing-function: linear; }
+  .reveal-slide { animation-name: slide-in; }
+
+  /* Scroll-linked progress bars — driven by document or view progress. */
+  .scroll-grow {
+    transform-origin: 0 50%;
+    animation: grow-x 1s linear both;
+    animation-timeline: scroll(root);
+  }
+  .view-grow {
+    transform-origin: 0 50%;
+    animation: grow-x 1s linear both;
+    animation-timeline: view();
+    animation-range: cover 6% cover 90%;
+  }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(54px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes rise-sm {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(44px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes grow-x {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.7); }
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(9px); }
+}
+/* The wall duplicates its cards once, so one full loop is half the column's
+   height MINUS half a gap — the gap that sits between the two halves. Using a
+   plain -50% would drift by gap/2 each cycle and visibly jump at the seam. */
+@keyframes drift-up {
+  from { transform: translateY(0); }
+  to { transform: translateY(calc(-50% - (var(--wall-gap) / 2))); }
+}
+@keyframes drift-down {
+  from { transform: translateY(calc(-50% - (var(--wall-gap) / 2))); }
+  to { transform: translateY(0); }
+}
+@keyframes caret-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
 }
 
 /* ============================================================
-   Custom cursor — Lusion/Linear-style two-layer cursor. The Cursor
-   client component manages position via inline transforms; this CSS
-   owns visual treatment + reveal/grow states.
-
-   Visibility gates:
-     - pointer:coarse → never renders (client returns null)
-     - prefers-reduced-motion → never renders (client returns null)
-     - html.has-custom-cursor → set by client on first pointer move;
-       hides the OS cursor and shows ours. Before first move, OS cursor
-       is shown (avoids "no cursor at all" weirdness on initial paint).
+   Boot sequence — the 0→100 curtain. Kept in CSS so the curtain
+   paints on first frame, before hydration, with no flash of content.
    ============================================================ */
-@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  html.has-custom-cursor,
-  html.has-custom-cursor body,
-  html.has-custom-cursor a,
-  html.has-custom-cursor button,
-  html.has-custom-cursor [role="button"],
-  html.has-custom-cursor [data-cursor-grow] {
+.boot {
+  transition: clip-path 1100ms var(--ease-in-out-quart);
+  clip-path: inset(0 0 0 0);
+}
+.boot[data-state="lifted"] {
+  clip-path: inset(0 0 100% 0);
+}
+/* Set by the inline script in layout.tsx when this session has already seen
+   the boot. Kills the curtain before the first paint, not after hydration. */
+html.boot-seen .boot {
+  display: none;
+}
+
+/* ============================================================
+   Custom cursor — only on true pointing devices.
+
+   Gated on `:has(.cursor-dot)`: the Cursor component renders those elements
+   only at the "full" tier, so their presence in the DOM *is* the signal.
+   The previous version added a class to <html> from an effect, which raced
+   React's concurrent hydration and reported a mismatch on every load.
+   ============================================================ */
+@media (hover: hover) and (pointer: fine) {
+  html:has(.cursor-dot),
+  html:has(.cursor-dot) body,
+  html:has(.cursor-dot) a,
+  html:has(.cursor-dot) button,
+  html:has(.cursor-dot) input {
     cursor: none;
   }
-
-  /* Cursor uses var(--color-ink) — dark in light theme, light bone in dark
-     theme. Auto-themes via tokens; visible against either paper.
-
-     IMPORTANT: NO mix-blend-mode here. The previous version used
-     `mix-blend-mode: difference` for a theme-agnostic "Lusion auto-invert"
-     trick, but the cursor is position:fixed over a constantly-animating
-     WebGL canvas — every cursor move forced the browser to read back
-     canvas pixels and recomposite the cursor's bounding region at 60 Hz.
-     Compounded with the canvas's own 60 fps draw loop, this destroyed
-     frame rate (the "slow + glitchy" symptom). Solid color is the right
-     tradeoff: 99% visual quality, 0% GPU readback. */
-  .cursor-ring {
-    width: 32px;
-    height: 32px;
-    border-radius: 9999px;
-    border: 1.5px solid var(--color-ink);
-    background: transparent;
-    transition:
-      width 280ms cubic-bezier(0.16, 1, 0.3, 1),
-      height 280ms cubic-bezier(0.16, 1, 0.3, 1),
-      background-color 220ms ease,
-      border-color 220ms ease,
-      opacity 220ms ease;
-    /* will-change: transform only — width/height transitions are infrequent
-       and don't need a permanent compositor hint. */
-    will-change: transform;
-  }
-  .cursor-ring[data-grow="true"] {
-    width: 56px;
-    height: 56px;
-    background: var(--color-ink);
-    border-color: var(--color-ink);
-    /* Slight opacity drop on the filled state so it doesn't dominate when
-       sitting on top of dense text. */
-    opacity: 0.4;
-  }
-  .cursor-dot {
-    width: 4px;
-    height: 4px;
-    border-radius: 9999px;
-    background: var(--color-ink);
-    transition: opacity 220ms ease;
-    will-change: transform;
-  }
-  /* When ring is grown over an interactive target, hide the dot so it
-     doesn't sit floating inside the filled circle. */
-  html:has(.cursor-ring[data-grow="true"]) .cursor-dot {
-    opacity: 0;
-  }
 }
 
 /* ============================================================
-   Hacker layer — Build A + C
+   Research wall — three columns drifting in opposite directions.
+   Hovering the wall pauses every column (CSS only, no listeners).
    ============================================================ */
-
-/* Hero intro overlay (`> whoami / abhimanyu_gupta`) — managed by
-   MotionChoreography GSAP timeline. Under reduced-motion the choreography
-   doesn't run AT ALL, so the intro would sit in viewport forever. Hide it. */
-@media (prefers-reduced-motion: reduce) {
-  [data-choreograph="hero-intro"] {
-    display: none;
-  }
+.wall {
+  --wall-gap: 0.875rem; /* must equal the column's `gap` */
+}
+.wall-col {
+  gap: var(--wall-gap);
+  animation: var(--wall-dir, drift-up) var(--wall-dur, 60s) linear infinite;
+}
+.wall:hover .wall-col,
+.wall:focus-within .wall-col {
+  animation-play-state: paused;
 }
 
-/* Cursor hex trail (Build C) — small mono hex chars that drift up + fade out
-   in the wake of the cursor. The cursor.tsx client spawns one DOM node per
-   spawn-interval; the animation here owns the visual + cleanup timing. */
-.cursor-hex-trail {
-  position: fixed;
-  display: block;
-  font-family: var(--font-mono), monospace;
-  font-size: 10px;
-  line-height: 1;
-  color: var(--color-ink);
-  opacity: 0.4;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  /* Above section rail / theme toggle / context menu, just below the cursor
-     itself (z-200). Trail should follow the cursor over any UI surface. */
-  z-index: 180;
-  animation: cursor-hex-fade 600ms ease-out forwards;
+/* ============================================================
+   Op title wipe — acid fills the headline left→right on card hover.
+   background-size is the only animated property (compositable, no reflow).
+   ============================================================ */
+.wipe-title {
+  background-image: linear-gradient(var(--color-acid), var(--color-acid));
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  background-position: 0 0;
+  transition:
+    background-size 520ms var(--ease-out-expo),
+    color 320ms ease;
 }
-@keyframes cursor-hex-fade {
-  0% {
-    opacity: 0.5;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, calc(-50% - 22px)) scale(0.75);
-  }
-}
-@media (pointer: coarse), (prefers-reduced-motion: reduce) {
-  .cursor-hex-trail {
-    display: none;
-  }
+.group\/op:hover .wipe-title,
+.group\/op:focus-within .wipe-title {
+  background-size: 100% 100%;
+  color: var(--color-acid-ink);
 }
 
-/* Root mode (Build C) — Konami code or the top-right Terminal button toggles
-   `html.root-mode`. All theme tokens swap to OLED-black + matrix-green; the
-   entire site re-themes via its existing token consumption. */
-:root.root-mode {
-  --color-paper: #050505;
-  --color-paper-deep: #0a0a0a;
-  --color-ink: #33ff00;
-  --color-ink-soft: #2dd200;
-  --color-ink-mute: #1d8800;
-  --color-rule: #1d8800;
-  --color-accent: #33ff00;
+/* ============================================================
+   THE 3D LAYER
+   Cards are physical panels: they sit in a perspective, rotate toward the
+   cursor, and catch a specular band as they turn. The perspective lives on
+   the *container* — putting it on the card itself would make each card its
+   own vanishing point, and a grid of cards would all tilt toward their own
+   centres instead of sharing one light.
+   ============================================================ */
+.tilt-scene {
+  perspective: 1400px;
+  perspective-origin: 50% 40%;
 }
-:root.root-mode body {
-  font-family: var(--font-mono), monospace;
+.tilt-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+  /* Grounding shadow. Without it a tilting card looks like a decal on the
+     page rather than an object above it. */
+  box-shadow: 0 1px 0 0 color-mix(in srgb, var(--color-ink) 4%, transparent) inset;
+  transition: box-shadow 400ms var(--ease-out-expo);
 }
-
-/* Intrusion log line — types in via opacity sweep, fades on removal. */
-.intrusion-log-line {
-  animation: intrusion-log-in 600ms ease-out both;
-}
-@keyframes intrusion-log-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 0.75;
-    transform: translateY(0);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .intrusion-log-line {
-    animation: none;
-    opacity: 0.75;
-  }
+.tilt-card:hover {
+  box-shadow:
+    0 1px 0 0 color-mix(in srgb, var(--color-ink) 9%, transparent) inset,
+    0 30px 60px -30px rgb(0 0 0 / 0.9),
+    0 0 60px -20px color-mix(in srgb, var(--color-acid) 14%, transparent);
 }
 
-
-/* TypeOut caret — blinking block, sits inline after the typed text.
-   1ch wide so it occupies one mono-character slot; --color-accent so it
-   reads as the same oxblood/steel-cyan as the rest of the marginal marks. */
-.type-caret {
-  display: inline-block;
-  width: 0.6ch;
-  height: 1em;
-  margin-left: 0.15ch;
-  vertical-align: -0.12em;
-  background: var(--color-accent);
-  animation: type-caret-blink 720ms steps(1) infinite;
-}
-@keyframes type-caret-blink {
-  0%, 50%   { opacity: 1; }
-  51%, 100% { opacity: 0; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .type-caret { animation: none; opacity: 1; }
-}
-
-/* Redacted reveal — solid bar (::after) covers the text, scan line
-   (::before) travels with the receding edge. On .revealed, the bar
-   clip-paths away left→right and the scan line sweeps off-screen. */
-.redacted {
-  position: relative;
-  display: inline-block;
-  isolation: isolate;
-}
-.redacted::after {
-  content: "";
-  position: absolute;
-  inset: -0.05em -0.15em;
-  background: var(--color-ink);
-  clip-path: inset(0 0 0 0);
-  transition: clip-path 900ms cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 2;
-  pointer-events: none;
-}
-/* Scan line uses `left` (not transform translateX) because translateX(100%)
-   on a 2px-wide element only moves it 2px. Animating `left` between 0 and
-   100% of the parent reliably crosses the redaction width. Animation with
-   `forwards` fill ends at opacity 0 so the line doesn't persist as a
-   vertical bar after the sweep completes — the previous transition-based
-   approach left opacity stuck at 1. */
-.redacted::before {
-  content: "";
-  position: absolute;
-  top: -0.05em;
-  bottom: -0.05em;
-  left: -0.15em;
-  width: 2px;
-  background: var(--color-accent);
-  box-shadow: 0 0 8px var(--color-accent);
+/* Specular band. Skewed, narrow, and very low alpha — at full strength this
+   reads as a gradient overlay, which is exactly what it must not look like. */
+.card-sheen {
+  background: linear-gradient(
+    100deg,
+    transparent 38%,
+    color-mix(in srgb, var(--color-ink) 7%, transparent) 48%,
+    color-mix(in srgb, var(--color-acid) 9%, transparent) 51%,
+    transparent 62%
+  );
   opacity: 0;
-  z-index: 3;
+  transform: translateX(-100%);
+  transition: opacity 400ms var(--ease-out-expo);
+}
+.tilt-card:hover .card-sheen {
+  opacity: 1;
+}
+
+/* ============================================================
+   ASCII fluid — the hero's glyph field.
+   Tight leading so cells read as a grid rather than lines of text, and a
+   vertical mask so the fluid never competes with the headline sitting on
+   top of it.
+   ============================================================ */
+.ascii-fluid {
+  font-size: 13px;
+  line-height: 13px;
+  letter-spacing: 0.16em;
+  /* Now that the tank sits clear of the copy this can breathe again, but it
+     stays a texture rather than a subject — the glow that used to be here
+     bloomed the glyphs into the headline's counters. */
+  opacity: 0.28;
+  /* Fades into the section at the top and dissolves at the waterline so the
+     pool has no hard bottom edge. */
+  mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+}
+
+/* Scrim between the fluid and the hero copy. The pool sits at the bottom of
+   the tank under gravity, which is exactly where the lede, buttons and stats
+   are — so the fluid has to be pushed back locally rather than globally. */
+.hero-scrim {
+  background: linear-gradient(
+    to top,
+    var(--color-void) 0%,
+    color-mix(in srgb, var(--color-void) 94%, transparent) 34%,
+    color-mix(in srgb, var(--color-void) 70%, transparent) 62%,
+    transparent 100%
+  );
+}
+
+/* ============================================================
+   Scroll expansion (GSAP Flip).
+   `.expand-panel` goes width 0 → 100% and Flip interpolates the layout
+   between them. aspect-ratio is fixed so height follows width; square
+   corners because nothing else on this site is rounded.
+   ============================================================ */
+/* The panel always occupies its full box; only the clip moves. Reserving
+   the space is what makes this immune to reflow — the headline above and
+   the section below never shift by a pixel while it opens. */
+.expand-panel {
+  display: block;
+  position: relative;
+  /* Full column width — capped at 46rem the diagram sat in the left half of
+     the headline with dead space to its right. */
+  width: 100%;
+  margin-block: 0.5em 0.35em;
+  aspect-ratio: 16 / 7;
+  overflow: hidden;
+  border: 1px solid var(--color-line-hi);
+  background: var(--color-pit);
+  /* Starting state, so it is already wiped shut before GSAP takes over and
+     there is no flash of a fully-open panel on first paint. */
+  clip-path: inset(0% 100% 0% 0%);
+  will-change: clip-path;
+}
+.expand-panel-inner {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+.expand-anim {
+  display: inline-block;
+  transform-origin: 0% 50%;
+  will-change: transform;
+}
+
+/* ============================================================
+   Cursor halo — bridges the pointer to the ink fluid it's pushing.
+
+   The dot and ring have hard edges; the fluid behind them is a bright,
+   soft-falling accent wash. Side by side the cursor read as a cut-out
+   pasted on top. This sits underneath both and shares the fluid's falloff,
+   so the pointer looks like the source of the ink rather than a separate
+   layer floating over it.
+   ============================================================ */
+.cursor-glow {
+  width: 260px;
+  height: 260px;
+  margin: -130px 0 0 -130px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-acid) 20%, transparent) 0%,
+    color-mix(in srgb, var(--color-acid) 8%, transparent) 34%,
+    transparent 70%
+  );
+  mix-blend-mode: screen;
+  transition: opacity 400ms ease;
+}
+
+/* ============================================================
+   Trace line head — a scanning reticle riding the drawn edge.
+
+   A bare dot read as a stray artefact rather than as something tracking the
+   line, so the node is four stacked layers: a soft aura for presence, sonar
+   pings for life, a slowly rotating corner-bracket reticle for intent, and a
+   hard core to mark the exact point. Everything except the transform is CSS,
+   so the scroll handler still only writes one property.
+   ============================================================ */
+.trace-head {
+  position: fixed;
+  width: 0;
+  height: 0;
+  transition: opacity 400ms ease;
+  will-change: transform;
+}
+/* Every layer is centred on the head's origin. */
+.trace-head > * {
+  position: absolute;
+  top: 0;
+  left: 0;
+  translate: -50% -50%;
+  border-radius: 9999px;
   pointer-events: none;
 }
-.redacted.revealed::after {
-  clip-path: inset(0 0 0 100%);
+
+.trace-head-aura {
+  width: 210px;
+  height: 210px;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-acid) 30%, transparent) 0%,
+    color-mix(in srgb, var(--color-acid) 10%, transparent) 30%,
+    transparent 68%
+  );
 }
-.redacted.revealed::before {
-  animation: redacted-scan 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+/* Sonar. Two rings on the same keyframes, offset in time so one is always
+   mid-flight — a single ring reads as a stutter. */
+.trace-head-ping {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-acid);
+  animation: trace-ping 2.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
-@keyframes redacted-scan {
+.trace-head-ping:nth-of-type(3) {
+  animation-delay: -1.3s;
+}
+@keyframes trace-ping {
   0% {
-    opacity: 1;
-    left: -0.15em;
+    opacity: 0.85;
+    scale: 0.35;
   }
-  85% {
-    opacity: 1;
+  70% {
+    opacity: 0;
+    scale: 2.4;
   }
   100% {
     opacity: 0;
-    left: calc(100% + 0.15em);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .redacted::after,
-  .redacted::before {
-    display: none;
+    scale: 2.4;
   }
 }
 
-/* Glitch hover — RGB-split text-shadow + tiny jitter on hover. Subtle so it
-   reads as "security-camera artifact" rather than "broken text." One-shot
-   200ms animation; doesn't loop. Reduced-motion: no glitch, no shake. */
-.glitch-hover {
-  display: inline-block;
-  transition: text-shadow 80ms ease-out;
-  will-change: transform, text-shadow;
+/* Corner brackets: a bordered square masked down to its four corners, then
+   rotated. The mask is what turns an outline box into a reticle. */
+/* Axis-aligned, and it breathes rather than spins. Continuous rotation was
+   wrong twice over: four symmetric corner brackets look identical at every
+   90°, so the motion never resolved into anything — it just read as the
+   marker being crooked. A scale pulse gives it life while keeping the
+   brackets square to the page, which is what makes it read as a lock-on. */
+.trace-head-reticle {
+  width: 42px;
+  height: 42px;
+  border: 1.5px solid color-mix(in srgb, var(--color-acid) 90%, transparent);
+  --bracket: 12px;
+  -webkit-mask:
+    linear-gradient(#000 0 0) top left / var(--bracket) var(--bracket) no-repeat,
+    linear-gradient(#000 0 0) top right / var(--bracket) var(--bracket) no-repeat,
+    linear-gradient(#000 0 0) bottom left / var(--bracket) var(--bracket) no-repeat,
+    linear-gradient(#000 0 0) bottom right / var(--bracket) var(--bracket) no-repeat;
+  mask:
+    linear-gradient(#000 0 0) top left / var(--bracket) var(--bracket) no-repeat,
+    linear-gradient(#000 0 0) top right / var(--bracket) var(--bracket) no-repeat,
+    linear-gradient(#000 0 0) bottom left / var(--bracket) var(--bracket) no-repeat,
+    linear-gradient(#000 0 0) bottom right / var(--bracket) var(--bracket) no-repeat;
+  animation: trace-lock 2.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
-.glitch-hover:hover {
-  text-shadow:
-    1.5px 0 0 rgba(255, 30, 110, 0.55),
-    -1.5px 0 0 rgba(0, 200, 255, 0.55);
-  animation: glitch-jitter 220ms steps(5) 1;
+@keyframes trace-lock {
+  0%,
+  100% {
+    scale: 1;
+    opacity: 0.9;
+  }
+  50% {
+    scale: 0.86;
+    opacity: 1;
+  }
 }
-@keyframes glitch-jitter {
-  0%, 100% { transform: translate(0, 0); }
-  20%      { transform: translate(1.5px, -1px); }
-  40%      { transform: translate(-1.5px, 1px); }
-  60%      { transform: translate(0.75px, 0.75px); }
-  80%      { transform: translate(-0.75px, -0.75px); }
+
+.trace-head-core {
+  width: 9px;
+  height: 9px;
+  background: var(--color-acid);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--color-acid) 20%, transparent),
+    0 0 18px 4px color-mix(in srgb, var(--color-acid) 70%, transparent);
 }
+
 @media (prefers-reduced-motion: reduce) {
-  .glitch-hover:hover {
-    text-shadow: none;
+  .trace-head-ping,
+  .trace-head-reticle {
     animation: none;
+  }
+  .trace-head-ping {
+    opacity: 0.3;
   }
 }
 
 /* ============================================================
-   Articles inner-scroll — desktop only.
-   The 38 rows live in a fixed-height region so the section stays
-   compact; the user scrolls the list WITHIN the section.
-     - overscroll-behavior: contain  → stops scroll-chaining feel
-       jank at the inner-list boundaries (page resumes naturally
-       only when cursor leaves the box).
-     - scrollbar-width thin + tokened color → subtle bar, both themes
-       (Firefox uses these two properties; WebKit/Blink need the
-       ::-webkit-scrollbar pseudo blocks below).
-     - mask-image gradient → fades the bottom edge so the reader
-       sees "more below" without a chunky shadow or affordance chip.
-   Mobile (below md): unset, list flows naturally. Nested touch
-   scroll inside another scroll is consistently janky on iOS/Android.
+   Connected grid — the staircase layout section 03 unfolds along.
+   Single column on small screens (a staircase needs width to read as one);
+   an 8-track grid above md, with each card placed by --cg-col / --cg-span.
    ============================================================ */
 @media (min-width: 768px) {
-  .articles-scroll {
-    max-height: 60vh;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-rule) transparent;
-    mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
+  .connected-grid > [data-cg-item] {
+    grid-column: var(--cg-col) / span var(--cg-span);
   }
-  .articles-scroll::-webkit-scrollbar {
-    width: 6px;
-  }
-  .articles-scroll::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .articles-scroll::-webkit-scrollbar-thumb {
-    background-color: var(--color-rule);
-    border-radius: 3px;
-  }
-  .articles-scroll::-webkit-scrollbar-thumb:hover {
-    background-color: var(--color-ink-mute);
-  }
+}
+/* The surface and its content are scaled independently, so both need their
+   own compositing layer to avoid re-rasterising type every frame. */
+.connected-grid [data-cg-surface],
+.connected-grid [data-cg-content] {
+  will-change: transform;
 }
 
 /* ============================================================
-   Book stack page-turn UX (components/book/book-stack.tsx).
-   Each .book-page contains a .book-page-scroll inner container that
-   accepts native scroll for tall content; we hide its scrollbar so the
-   page reads as paper, not as a UI surface. overscroll-behavior:contain
-   prevents the bottom-of-page scroll from triggering window scroll-chain
-   into the timeline before the user's last wheel input.
+   Nav preview grid (HoverGrid). Panels stack in one cell and are toggled
+   by opacity; GSAP owns the clip-path wipe on each tile.
    ============================================================ */
-.book-page-scroll,
-.book-flip-page {
-  scrollbar-width: none; /* Firefox */
+.nav-preview {
+  opacity: 0;
+  z-index: 0;
 }
-.book-page-scroll::-webkit-scrollbar,
-.book-flip-page::-webkit-scrollbar {
-  display: none; /* WebKit */
+.nav-preview.is-current {
+  opacity: 1;
 }
 
 /* ============================================================
-   Glass chrome — premium "floating UI" layer effect. Any element with
-   `.glass-chrome` gets a frosted-glass backdrop: backdrop-blur over a
-   semi-opaque background, slight saturation boost so the colors behind
-   read warmer. Used for the terminal button, ROOT MODE toggle, section
-   rail, intrusion log — all the fixed-position chrome that floats over
-   the OGL ambient canvas.
+   Root mode — konami. Re-points the accent token instead of filtering
+   the document: a `filter` on <html> would make it a containing block
+   and break every position:fixed element on the page (nav, cursor,
+   progress bar). Token swap gets the same amber shift, no breakage.
    ============================================================ */
-.glass-chrome {
-  background: rgba(19, 20, 26, 0.55);
-  -webkit-backdrop-filter: blur(14px) saturate(135%);
-  backdrop-filter: blur(14px) saturate(135%);
+:root.root-mode {
+  --color-acid: #ffae3d;
 }
-:root.root-mode .glass-chrome {
-  background: rgba(10, 10, 10, 0.55);
+:root.root-mode body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 174, 61, 0.05) 0 1px,
+    transparent 1px 3px
+  );
 }
-@supports not (backdrop-filter: blur(1px)) {
-  /* No backdrop-filter support: fall back to opaque paper-deep so the
-     button is still readable. */
-  .glass-chrome {
-    background: var(--color-paper-deep);
+
+/* ============================================================
+   Reduced motion — kill every ambient loop and scrub. Reveal
+   animations collapse to instant so nothing is left invisible.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.001ms !important;
+  }
+  .wall-col {
+    animation: none !important;
+    transform: none !important;
+  }
+  /* The simulations never mount at this tier (see lib/stage/capability.ts),
+     but the surfaces they'd draw on must not leave artefacts behind. */
+  .ascii-fluid,
+  .card-sheen {
+    display: none;
+  }
+  .tilt-card,
+  .tilt-card:hover {
+    transform: none !important;
+    box-shadow: none;
+  }
+  /* No scrub runs at this tier, so the panel would stay wiped shut and the
+     attack-path diagram would never be seen. Pin it open. */
+  .expand-panel {
+    clip-path: none;
+  }
+  .expand-panel-inner,
+  .expand-anim {
+    transform: none !important;
   }
 }
