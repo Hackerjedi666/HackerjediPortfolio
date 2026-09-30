@@ -106,10 +106,10 @@ export default function Home() {
                to the bottom. */
             ops: <ClientCycler />,
             published: <ChainStepper />,
-            forensia: <AddressTrace />,
             stack: <ToolMarquee />,
             about: <CareerRule />,
           }}
+          details={{ forensia: <AddressTrace /> }}
           panels={{
             ops: <Ops />,
             stack: <Stack />,

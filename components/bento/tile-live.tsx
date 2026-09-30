@@ -146,9 +146,11 @@ export function AddressTrace() {
   const shown = Math.min(i, HOPS.length);
 
   return (
-    <div ref={hostRef} className="tile-live tile-live-tr">
-      <p className="tile-live-label">Sample trace</p>
-      <p className="tile-live-mono">{TRACE}</p>
+    <div ref={hostRef} className="tile-address-trace">
+      <div className="tile-address-heading">
+        <p className="tile-live-label">Sample trace</p>
+        <p className="tile-live-mono">{TRACE}</p>
+      </div>
       <span className="tile-live-hops">
         {HOPS.map((h, n) => (
           <span key={h} data-on={n < shown ? "true" : "false"}>

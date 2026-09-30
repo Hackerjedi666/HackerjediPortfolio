@@ -1919,6 +1919,37 @@ html.lenis { scroll-behavior: auto; }
 .tile-live-rail > span[data-on="true"] { background: var(--color-acid); }
 
 /* Trace hops: each arrives, none disappears, then the set resets. */
+.bento-tile-with-detail .bento-copy {
+  margin-top: 0;
+  padding-top: 1.25rem;
+}
+.bento-tile-with-detail:hover .bento-copy { transform: none; }
+.bento-detail {
+  display: block;
+  margin-top: auto;
+  padding-top: 1.25rem;
+}
+.tile-address-trace {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-hairline);
+}
+.tile-address-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .5rem 1rem;
+}
+.tile-address-trace .tile-live-hops { justify-content: flex-start; }
+.bento-tile-with-detail .bento-cta {
+  position: static;
+  margin-top: 1.25rem;
+  opacity: 1;
+  transform: none;
+}
 .tile-live-hops {
   display: flex;
   flex-wrap: wrap;

@@ -21,6 +21,8 @@ type Props = {
    * has to sit outside it, or it inherits the dimming and the fade.
    */
   overlay?: Partial<Record<TileId, React.ReactNode>>;
+  /** Content that needs its own space below the copy, rather than an overlay. */
+  details?: Partial<Record<TileId, React.ReactNode>>;
 };
 
 /**
@@ -44,7 +46,7 @@ type Props = {
  * Open and close travel the same path, and close runs at ~60% of open's
  * duration, because an exit that takes as long as an entrance reads as lag.
  */
-export function BentoHome({ panels, media = {}, overlay = {} }: Props) {
+export function BentoHome({ panels, media = {}, overlay = {}, details = {} }: Props) {
   const [open, setOpen] = useState<TileId | null>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
   const scrimRef = useRef<HTMLDivElement>(null);
@@ -293,6 +295,8 @@ export function BentoHome({ panels, media = {}, overlay = {} }: Props) {
                 ) : null}
               </span>
 
+              {details[tile.id] ? <span className="bento-detail">{details[tile.id]}</span> : null}
+
               {/* Rides up out of the bottom edge into the space the copy
                   vacates. The two move together on one curve, so it reads as
                   one gesture rather than two effects that happen to overlap. */}
@@ -307,6 +311,7 @@ export function BentoHome({ panels, media = {}, overlay = {} }: Props) {
 
           const cls = cn(
             "bento-tile group",
+            details[tile.id] && "bento-tile-with-detail",
             tile.bone && "bento-tile-bone",
             tile.accent && "bento-tile-accent",
             (opens || tile.href) && "bento-tile-opens"
