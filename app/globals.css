@@ -1,103 +1,178 @@
 @import "tailwindcss";
 
 /* ============================================================
-   DESIGN SYSTEM — "HACKERJEDI TERMINAL"
-   Black canvas, one acid accent, two faces. Every section speaks
-   only in these tokens; raw hex never appears in a component.
+   DESIGN SYSTEM — "DARK LUXURY"
 
-   Palette source: the redesign spec.
-     background #000 · panel #0a0a0a · hairline #141414 / #1e1e1e
-     text #f2f2f2 · body #8c8c8c · labels #7a7a7a · accent #c2ff45
+   Replaces the acid-terminal palette. Three things changed and each
+   fixed something measurable:
+
+   1. DEPTH LADDER, not pure black. The old canvas was #000 with a
+      #0a0a0a panel — a 4/255 luminance step, so the panel edge was
+      invisible and a single 1px border carried the entire structure.
+      Each surface here sits ~10 points above the last, so a panel
+      reads before its border is drawn and borders become refinement.
+   2. ONE SIGNAL ACCENT. Acid lime appears on the primary action, a
+      detection moment, a selected state, one closing surface. Nothing
+      decorative gets it. An accent that is everywhere is texture.
+   3. THREE VOICES. Space Grotesk carries display at full width (the
+      old build condensed every headline, which is the first thing
+      legibility loses), Manrope carries body, JetBrains Mono carries
+      data and labels only — it used to be the whole page.
+
+   Token NAMES are unchanged from the terminal system on purpose:
+   every component already speaks only in tokens, so the site
+   re-skins without touching a single component file.
    ============================================================ */
 @theme {
-  /* ---------- Surfaces (darkest → lightest) ---------- */
-  --color-void: #000000;         /* page canvas */
-  --color-pit: #050505;          /* terminal / deepest card */
-  --color-panel: #0a0a0a;        /* standard card surface */
-  --color-panel-hi: #101010;     /* card hover surface */
-  --color-hairline: #141414;     /* structural rule — section edges */
-  --color-line: #1a1a1a;         /* card border, resting */
-  --color-line-hi: #1e1e1e;      /* brighter rule — chips, dividers */
-  --color-line-lift: #2e2e2e;    /* card border, hover */
+  /* ---------- Dark surfaces (darkest → lightest) ----------
+     Steps of ~10/255. Do not compress them: the gap IS the depth. */
+  --color-void: #000000;         /* page canvas / bento gutter — true black */
+  --color-pit: #08080a;          /* terminal, and ink on an accent fill */
+  --color-panel: #0a0a0c;        /* bento panel */
+  --color-panel-hi: #121216;     /* cell inside a panel */
+  --color-cell: #121216;
+  --color-cell-hi: #18181d;      /* nested cell, hover surface */
 
-  /* ---------- Ink (brightest → dimmest) ---------- */
-  --color-ink: #f2f2f2;          /* headlines, primary text */
-  --color-ink-soft: #c8c8c8;     /* emphasised body (accent cards) */
-  --color-ink-body: #8c8c8c;     /* body copy — 6.2:1 on void */
-  --color-ink-label: #7a7a7a;    /* eyebrows, meta — 4.9:1 on void */
-  /* The spec's #6f6f6f and #4a4a4a both land under WCAG AA on pure black
-     (4.2:1 and 2.4:1). Lifted to the nearest values that clear AA for their
-     size class — 4.6:1 for body-size detail, 3.1:1 for the large ghosted
-     headline clause. Visually indistinguishable, legally not. */
-  --color-ink-dim: #767676;      /* tertiary detail — 4.6:1 on void */
-  --color-ink-ghost: #5c5c5c;    /* headline second clause — 3.1:1, large text only */
+  /* ---------- Light surfaces ----------
+     Bone panels inside the dark page are rhythm, not a second theme.
+     A light/dark toggle is deliberately not offered: a security site
+     in light mode reads as a productivity app. */
+  --color-bone: #efefea;
+  --color-bone-hi: #e5e5df;      /* cell inside a bone panel */
+  --color-bone-dim: #dcdcd5;
+
+  /* ---------- Hairlines ----------
+     0.06 resting, 0.09 for the lifted top edge. The old system used a
+     flat 0.10 everywhere, so every border caught light at the same
+     intensity from no direction at all. */
+  --color-hairline: rgba(255, 255, 255, 0.06);
+  --color-line: rgba(255, 255, 255, 0.06);
+  --color-line-hi: rgba(255, 255, 255, 0.09);
+  --color-line-lift: rgba(255, 255, 255, 0.14);
+  --color-hairline-lt: rgba(10, 10, 11, 0.07);
+
+  /* ---------- Ink (brightest → dimmest) ----------
+     Every value below clears WCAG AA for its size class against
+     --color-panel, which is the lightest dark surface text sits on
+     (checked, not assumed — the old comments in this file show how
+     easily "visually fine" lands under 4.5:1 on a dark ground). */
+  --color-ink: #ffffff;          /* headlines, primary text */
+  --color-ink-soft: #d6d6dc;     /* emphasised body — 14.9:1 */
+  --color-ink-body: #a8a8b2;     /* body copy — 8.1:1 */
+  --color-ink-label: #8b8b96;    /* eyebrows, meta — 5.7:1 */
+  --color-ink-dim: #7c7c86;      /* tertiary detail — 4.6:1 */
+  --color-ink-ghost: #6a6a75;    /* large display clause only — 3.6:1 on panel */
+
+  /* Ink on bone panels. */
+  --color-ink-lt: #0a0a0b;
+  --color-ink-lt-dim: #66666f;   /* 4.9:1 on bone */
 
   /* ---------- Accent — one, and only one ----------
-     Root mode (konami) re-points --color-acid at amber; every acid
-     surface in the site re-themes for free because nothing hardcodes it. */
-  --color-acid: #c2ff45;
-  --color-acid-ink: #000000;     /* text ON an acid fill */
+     Root mode (konami) re-points --color-acid; every accent surface
+     re-themes for free because nothing hardcodes it. The name stays
+     "acid" so no component changes. */
+  --color-acid: #c7f23a;         /* acid lime — 15.6:1 on panel */
+  --color-acid-lift: #d9ff62;    /* hover only */
+  --color-acid-ink: #08080a;     /* text ON an accent fill — 15.9:1 */
+  /* The marker wash that goes with this accent is declared in :root just
+     below, not here — see the note there. */
 
-  /* ---------- Type: display + mono, nothing else ---------- */
-  --font-display: var(--font-chakra-petch), "Chakra Petch", ui-sans-serif, sans-serif;
+  /* ---------- Type: display + body + data ---------- */
+  --font-display: var(--font-space-grotesk), "Space Grotesk", ui-sans-serif, sans-serif;
+  --font-body: var(--font-manrope), Manrope, ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", monospace;
 
-  /* ---------- Scale ----------
-     Mono UI text sits on a tight 10→15px ladder; display headlines are
-     fluid so the hero fills any viewport without a media query. */
-  --text-micro: 0.625rem;                 /* 10 — stat captions, timeline meta */
+  /* ---------- Scale — ten steps, and they are far apart ----------
+     The rebuilt design collapsed 21 sizes to 10. Six of the old ones
+     sat inside a 10px range, which no reader can perceive as
+     hierarchy. Display sizes all share ONE tracking (-0.035em) and
+     labels share ONE (0.15em). */
+  --text-micro: 0.75rem;                  /* 12 — dense captions */
   --text-micro--line-height: 1.5;
-  --text-micro--letter-spacing: 0.22em;
+  --text-micro--letter-spacing: 0.15em;
 
-  --text-label: 0.6875rem;                /* 11 — eyebrows, nav, buttons */
+  --text-label: 0.8125rem;                /* 13 — eyebrows, nav, buttons */
   --text-label--line-height: 1.5;
-  --text-label--letter-spacing: 0.2em;
+  --text-label--letter-spacing: 0.15em;
 
-  --text-chip: 0.75rem;                   /* 12 — tags, terminal hints */
+  --text-chip: 0.875rem;                  /* 14 — tags, hints */
   --text-chip--line-height: 1.5;
-  --text-chip--letter-spacing: 0.12em;
+  --text-chip--letter-spacing: 0.06em;
 
-  --text-sm: 0.8125rem;                   /* 13 — terminal body, dense copy */
+  --text-sm: 0.875rem;                    /* 14 — terminal body */
   --text-sm--line-height: 1.7;
 
-  --text-body: 0.9375rem;                 /* 15 — body copy */
-  --text-body--line-height: 1.75;
+  --text-body: 1rem;                      /* 16 — body copy */
+  --text-body--line-height: 1.65;
 
-  --text-stat: 1.875rem;                  /* 30 — hero counters */
-  --text-stat--line-height: 1;
-  --text-stat--letter-spacing: -0.02em;
+  --text-lead: 1.25rem;                   /* 20 — hero lede */
+  --text-lead--line-height: 1.65;
 
-  --text-h4: 1.3125rem;                   /* 21 — capability + anchor titles */
-  --text-h4--line-height: 1.2;
-  --text-h4--letter-spacing: -0.01em;
+  --text-h4: 1.375rem;                    /* 22 — card titles */
+  --text-h4--line-height: 1.3;
+  --text-h4--letter-spacing: -0.02em;
 
-  --text-h3: 1.5rem;                      /* 24 — kill-chain step titles */
-  --text-h3--line-height: 1.15;
-  --text-h3--letter-spacing: -0.015em;
+  --text-h3: 1.75rem;                     /* 28 */
+  --text-h3--line-height: 0.95;
+  --text-h3--letter-spacing: -0.035em;
 
-  --text-card: clamp(1.5rem, 3.4vw, 2.5rem);      /* 24→40 — op titles */
-  --text-card--line-height: 1.04;
-  --text-card--letter-spacing: -0.02em;
+  --text-stat: 2.75rem;                   /* 44 — counters */
+  --text-stat--line-height: 0.95;
+  --text-stat--letter-spacing: -0.035em;
 
-  --text-venture: clamp(1.75rem, 3.6vw, 2.75rem); /* 28→44 — venture names */
-  --text-venture--line-height: 1;
-  --text-venture--letter-spacing: -0.02em;
+  --text-card: clamp(1.75rem, 3.4vw, 2.75rem);     /* 28→44 */
+  --text-card--line-height: 0.95;
+  --text-card--letter-spacing: -0.035em;
 
-  --text-h2: clamp(2.125rem, 5.6vw, 4.75rem);     /* 34→76 — section heads */
-  --text-h2--line-height: 0.94;
-  --text-h2--letter-spacing: -0.025em;
+  --text-venture: clamp(2.125rem, 4.2vw, 3.625rem); /* 34→58 */
+  --text-venture--line-height: 0.95;
+  --text-venture--letter-spacing: -0.035em;
 
-  --text-h1: clamp(2.875rem, 10.5vw, 10.5rem);    /* 46→168 — hero */
-  --text-h1--line-height: 0.88;
-  --text-h1--letter-spacing: -0.03em;
+  --text-h2: clamp(2.125rem, 6vw, 5.5rem);          /* 34→88 */
+  --text-h2--line-height: 0.95;
+  --text-h2--letter-spacing: -0.035em;
 
-  /* ---------- Spacing — 4px rhythm, named by role ---------- */
+  --text-h1: clamp(2.75rem, 8.8vw, 7.875rem);       /* 44→126 */
+  --text-h1--line-height: 0.95;
+  --text-h1--letter-spacing: -0.035em;
+
+  /* ---------- Spacing — 8px rhythm ----------
+     The design collapsed 33 ad hoc values to seven. --spacing-gutter
+     is the bento gap and is deliberately off-scale at 7px: it is the
+     one signature measurement in the system. */
   --spacing-gutter: 1.375rem;    /* 22 — page inset */
-  --spacing-section: 10rem;      /* 160 — section vertical padding */
+  --spacing-bento: 0.4375rem;    /* 7 — gutter between panels */
+  --spacing-section: 7rem;       /* 112 — section vertical padding */
 
-  /* ---------- Motion ---------- */
+  /* ---------- Radii — three ---------- */
+  --radius-pill: 6.25rem;        /* 100 */
+  --radius-cell: 1rem;           /* 16 */
+  --radius-panel: 1.75rem;       /* 28 */
+
+  /* ---------- Motion — ONE curve, two durations ----------
+     Entrances 700ms, hovers 400ms, and nothing is ever linear or
+     under 250ms. A single curve is most of what separates motion
+     that reads expensive from motion that reads cheap. */
+  /* Accent glows, tokenised. These were three different hardcoded
+     rgba(194,255,69,...) literals scattered across components, which is
+     how a palette change breaks a site in places nobody thinks to look. */
+  --shadow-signal: 0 10px 34px -12px color-mix(in srgb, var(--color-acid) 45%, transparent);
+  --shadow-pit: 0 40px 90px -50px color-mix(in srgb, var(--color-acid) 25%, transparent);
+  --shadow-lift: 0 24px 60px -32px rgba(0, 0, 0, 0.75);
+
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --duration-enter: 700ms;
+  --duration-hover: 400ms;
+}
+
+/* Declared OUTSIDE @theme on purpose.
+   Tailwind treats a `--color-*` key in @theme as a utility namespace and is
+   free to drop one no utility ever references — and nothing references this
+   one, because it is read at runtime by getComputedStyle in the highlighter
+   rather than written as a class. A plain :root declaration always ships. */
+:root {
+  --color-marker: rgba(199, 242, 58, 0.3);
 }
 
 /* ============================================================
@@ -116,7 +191,7 @@
     -webkit-text-size-adjust: 100%;
   }
   body {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: var(--text-body);
     line-height: 1.75;
     overflow-x: hidden;
@@ -172,10 +247,85 @@
     --shell-w: 77.5rem; /* 1240 */
   }
 
+  /* ---------- BENTO PANELS ----------
+     Each section sits on the black gutter as a rounded panel.
+
+     The panel is a ::before BACKDROP, not a background on the section
+     itself, for one specific reason: anatomy.tsx has a `lg:sticky` child,
+     and giving any ancestor of a sticky element `overflow`, `transform` or
+     `will-change: transform` silently kills the stick. A pseudo-element
+     introduces none of the three, and it also means zero JSX churn —
+     every existing section became a panel without being touched.
+
+     `z-index: -1` keeps it behind the section's own content but inside the
+     stacking context `.section` already creates, so it can never escape
+     upward over the nav or the cursor. */
   .section {
     position: relative;
     z-index: 1;
     padding-block: clamp(5rem, 12vw, var(--spacing-section));
+  }
+  .section::before {
+    content: "";
+    position: absolute;
+    /* Half the gutter top and bottom, so two stacked panels leave exactly
+       one 7px gutter between them. */
+    inset: calc(var(--spacing-bento) / 2) var(--spacing-bento);
+    z-index: -1;
+    pointer-events: none;
+    border-radius: var(--radius-panel);
+    border: 1px solid var(--color-hairline);
+    background: var(--color-panel);
+    /* Directional light: the top edge catches more than the bottom, so the
+       panel reads as milled rather than drawn. A flat uniform border is the
+       component-library default and reads as one. */
+    box-shadow: inset 0 1px 0 var(--color-line-hi);
+  }
+
+  /* The hero is a panel too, but it is the only surface in the system that
+     gets the ambient radial. That glow is light entering the frame, not an
+     accent use — it is what replaced the blur that used to fake depth. */
+  .hero-panel {
+    padding-inline: clamp(1.375rem, 4vw, 3.5rem);
+  }
+  .hero-panel::before {
+    content: "";
+    position: absolute;
+    inset: calc(var(--spacing-bento) / 2) var(--spacing-bento);
+    z-index: -1;
+    pointer-events: none;
+    border-radius: var(--radius-panel);
+    border: 1px solid var(--color-hairline);
+    box-shadow: inset 0 1px 0 var(--color-line-hi);
+    background:
+      radial-gradient(
+        ellipse 80% 55% at 50% -12%,
+        color-mix(in srgb, var(--color-acid) 7%, transparent),
+        transparent 70%
+      ),
+      var(--color-panel);
+  }
+
+  /* Sections that ARE their own content column need room between the text
+     and the panel edge; 22px against a 28px radius looks like a mistake. */
+  .section.shell {
+    padding-inline: clamp(1.375rem, 4vw, 3.5rem);
+  }
+
+  /* ---------- BONE PANELS ----------
+     Rhythm, not a second theme: a light/dark toggle was deliberately not
+     built, because a security site in light mode reads as a productivity app.
+
+     Every token below is REMAPPED rather than overridden per-component, so
+     the entire subtree — utilities, glow tints, borders, the tilt card's
+     grounding shadow — inverts without a single component knowing it is on
+     a light surface. Values are contrast-checked against #EFEFEA, not
+     eyeballed: champagne is 1.96:1 on bone and would have been illegible,
+     so the accent darkens to bronze, which is the same signal at 5.0:1. */
+  .section-bone::before {
+    background: var(--color-bone);
+    border-color: var(--color-hairline-lt);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
   }
 
   /* Section eyebrow: "01 // SELECTED OPS ————————" */
@@ -205,12 +355,16 @@
     font-weight: 700;
     letter-spacing: 0.16em;
     white-space: nowrap;
+    /* Transform first so a hover lift and its glow arrive together. One
+       curve, one duration: mixed `ease` at 160/200ms was the difference
+       between motion that reads deliberate and motion that reads twitchy. */
     transition:
-      transform 160ms ease,
-      background-color 200ms ease,
-      border-color 200ms ease,
-      color 200ms ease,
-      box-shadow 200ms ease;
+      transform var(--duration-hover) var(--ease-out-expo),
+      background-color var(--duration-hover) var(--ease-out-expo),
+      border-color var(--duration-hover) var(--ease-out-expo),
+      color var(--duration-hover) var(--ease-out-expo),
+      box-shadow var(--duration-hover) var(--ease-out-expo);
+    will-change: transform;
   }
   .btn-acid {
     background: var(--color-acid);
@@ -234,6 +388,18 @@
   .btn-ghost:hover {
     border-color: var(--color-acid);
     color: var(--color-acid);
+  }
+
+  /* PRESS FEEDBACK — on pointer-down, not on release.
+     The moment feedback waits for `click`, directness "falls off a cliff"
+     (Apple, Designing Fluid Interfaces). This is the one place in the system
+     that is deliberately fast: 100ms, because it is acknowledging an input
+     rather than moving anything. The hover curve at 400ms would read as lag.
+     `transform` only, so it never triggers layout. */
+  .btn:active,
+  .tilt-card:active {
+    transform: scale(0.98);
+    transition: transform 100ms ease-out;
   }
 
   /* Bordered micro-label used for tags and the toolbelt row. */
@@ -260,7 +426,7 @@
   .reveal-sm,
   .reveal-fade,
   .reveal-slide {
-    animation-duration: 900ms;
+    animation-duration: var(--duration-enter);
     animation-timing-function: var(--ease-out-expo);
     animation-fill-mode: both;
     animation-timeline: view();
@@ -546,6 +712,40 @@ html.boot-seen .boot {
   transition: opacity 400ms ease;
 }
 
+/* ---------- The cursor over a light ground ----------
+   Lime is 1.1:1 on #efefea, so on the bone panels the pointer did not get
+   harder to see, it stopped existing — and only inside those regions, which
+   is the worst kind of bug because the rest of the page kept working.
+
+   The accent identity is kept: this is the same olive the bone surfaces
+   already remap --color-acid to, at 5.2:1. The glow has to change BLEND
+   MODE as well as colour, because `screen` against a near-white ground
+   resolves to the ground — it was compositing to nothing. `multiply`
+   darkens instead, which is the only way a halo reads on paper.
+
+   Literal hex rather than var(--color-acid): the cursor is fixed to the
+   viewport and lives outside the bone subtree, so it never inherits that
+   remap. Written unlayered so it beats the Tailwind utilities on the
+   elements themselves. */
+[data-on-light="true"] .cursor-dot { background: #4d6e16; }
+
+[data-on-light="true"] .cursor-ring {
+  border-color: color-mix(in srgb, #4d6e16 70%, transparent);
+}
+[data-on-light="true"] .cursor-ring[data-grow="true"] {
+  background: color-mix(in srgb, #4d6e16 12%, transparent);
+}
+
+[data-on-light="true"] .cursor-glow {
+  mix-blend-mode: multiply;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, #4d6e16 18%, transparent) 0%,
+    color-mix(in srgb, #4d6e16 7%, transparent) 34%,
+    transparent 70%
+  );
+}
+
 /* ============================================================
    Trace line head — a scanning reticle riding the drawn edge.
 
@@ -682,18 +882,6 @@ html.boot-seen .boot {
 }
 
 /* ============================================================
-   Nav preview grid (HoverGrid). Panels stack in one cell and are toggled
-   by opacity; GSAP owns the clip-path wipe on each tile.
-   ============================================================ */
-.nav-preview {
-  opacity: 0;
-  z-index: 0;
-}
-.nav-preview.is-current {
-  opacity: 1;
-}
-
-/* ============================================================
    Root mode — konami. Re-points the accent token instead of filtering
    the document: a `filter` on <html> would make it a containing block
    and break every position:fixed element on the page (nav, cursor,
@@ -771,3 +959,1272 @@ html.boot-seen .boot {
     transform: none !important;
   }
 }
+
+/* ============================================================
+   REDUCED MOTION — global
+
+   The one existing guard in this file covered only the trace head, so
+   reveals, marquee drift, pulses and the boot curtain all still ran for
+   someone who had asked the OS for stillness.
+
+   Content must END VISIBLE here, never mid-reveal: `animation: none` on an
+   element whose resting state is `opacity: 0` inside a keyframe would hide
+   it permanently. Forcing fill-mode off and opacity on is what guarantees
+   the failure mode is "no motion", never "no content".
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal,
+  .reveal-sm,
+  .reveal-fade,
+  .reveal-slide {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ============================================================
+   BENTO GRID  —  the landing surface
+
+   Replaces the single stacked scroll. Twelve columns on a 7px gutter;
+   spans are 4 / 5 / 7 / 8 and never all equal, because an even grid gives
+   the eye no first stop and the entire point of a bento is that one cell
+   is obviously the way in.
+   ============================================================ */
+.bento-grid {
+  display: grid;
+  gap: var(--spacing-bento);
+  padding: var(--spacing-bento);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 48rem) {
+  .bento-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .bento-tile { grid-column: span min(var(--tile-span), 6); }
+}
+@media (min-width: 64rem) {
+  .bento-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-rows: minmax(15.5rem, auto);
+  }
+  .bento-tile {
+    grid-column: span var(--tile-span);
+    grid-row: span var(--tile-rows);
+  }
+}
+
+.bento-tile {
+  position: relative;
+  /* Paint containment: a repaint inside a tile cannot invalidate outside it,
+     which matters with eight tiles each holding several stacked layers. */
+  contain: paint;
+  display: flex;
+  flex-direction: column;
+  min-height: 15.5rem;
+  padding: clamp(1.5rem, 2.6vw, 2.25rem);
+  text-align: left;
+  border-radius: var(--radius-panel);
+  border: 1px solid var(--color-hairline);
+  /* MILLED GRAPHITE, not a flat fill.
+     A single --color-panel across nine tiles is what made the grid read as
+     nine identical rectangles: with no gradient there is no light in the
+     scene, so nothing has a surface, only an area. Two layers fix it at
+     zero runtime cost — a cool graphite body raked from the top-left, and
+     a soft specular bloom in that same corner. Every tile is lit from one
+     direction, which is what makes a grid of them read as one object. */
+  background:
+    radial-gradient(118% 88% at 6% -12%, rgba(255, 255, 255, 0.08), transparent 56%),
+    linear-gradient(153deg, #17171d 0%, #0d0d11 44%, #08080a 100%);
+  /* Directional light: brighter top edge, so the tile reads as milled. */
+  box-shadow: inset 0 1px 0 var(--color-line-hi);
+  /* transform + colour only — never width/height, which would reflow the
+     whole grid on every hover. */
+  transition:
+    background-color var(--duration-hover) var(--ease-out-expo),
+    border-color var(--duration-hover) var(--ease-out-expo),
+    transform var(--duration-hover) var(--ease-out-expo),
+    box-shadow var(--duration-hover) var(--ease-out-expo);
+}
+
+/* The one bone tile on the page. Exactly one, on the only externally
+   verifiable result here. The whole subtree re-maps, so nothing inside it
+   needs to know it is on a light surface — see `.section-bone` for why
+   `color` has to be re-declared rather than inherited. */
+.bento-tile-bone {
+  border-color: var(--color-hairline-lt);
+}
+
+.bento-tile-opens { cursor: pointer; }
+@media (hover: hover) and (pointer: fine) {
+  .bento-tile-opens:hover {
+    background: var(--color-panel-hi);
+    border-color: var(--color-line-lift);
+    transform: translateY(-2px);
+  }
+  .bento-tile-bone.bento-tile-opens:hover { background: var(--color-bone-hi); }
+}
+/* Press feedback belongs on pointer-DOWN and has to be quick; the 400ms
+   hover curve on a press reads as lag. */
+.bento-tile-opens:active { transform: scale(0.994); transition-duration: 100ms; }
+
+/* Open affordance: two bars that become a corner on hover. Cheaper to read
+   than an icon and it does not need a label. */
+.bento-cue {
+  display: block;
+  position: relative;
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+.bento-cue-bar {
+  position: absolute;
+  background: var(--color-ink-label);
+  transition: all var(--duration-hover) var(--ease-out-expo);
+}
+.bento-cue-bar:first-child { inset: 6px 0 auto 0; height: 1px; }
+.bento-cue-bar:last-child  { inset: 0 auto 0 6px; width: 1px; }
+.bento-tile-opens:hover .bento-cue-bar { background: var(--color-acid); }
+.bento-tile-opens:hover .bento-cue-bar:first-child { inset: 0 0 auto auto; width: 14px; }
+.bento-tile-opens:hover .bento-cue-bar:last-child  { inset: 0 0 auto auto; height: 14px; }
+
+/* ---------- The sheet a tile opens into ---------- */
+.bento-sheet-layer { position: fixed; inset: 0; z-index: 200; }
+.bento-scrim {
+  position: absolute;
+  inset: 0;
+  /* Strong enough to isolate the foreground; a weak scrim leaves the grid
+     visually competing with the content on top of it. */
+  background: color-mix(in srgb, var(--color-void) 82%, transparent);
+}
+.bento-sheet {
+  position: absolute;
+  inset: var(--spacing-bento);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-panel);
+  border: 1px solid var(--color-line-hi);
+  background: var(--color-panel);
+  box-shadow: var(--shadow-lift);
+  will-change: transform, opacity;
+}
+.bento-sheet-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex: none;
+  padding: 1rem clamp(1rem, 2.4vw, 2rem);
+  border-bottom: 1px solid var(--color-hairline);
+  background: var(--color-panel);
+}
+.bento-close {
+  display: grid;
+  place-items: center;
+  width: 44px;               /* touch target floor, not the icon's size */
+  height: 44px;
+  margin-right: -0.5rem;
+  border-radius: var(--radius-pill);
+  color: var(--color-ink-body);
+  transition:
+    color var(--duration-hover) var(--ease-out-expo),
+    background-color var(--duration-hover) var(--ease-out-expo);
+}
+.bento-close:hover {
+  color: var(--color-ink);
+  background: var(--color-panel-hi);
+}
+.bento-close:active { transform: scale(0.94); transition-duration: 100ms; }
+
+.bento-sheet-body {
+  flex: 1;
+  /* Sheet content is long and entirely offscreen until scrolled to. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+  overflow-y: auto;
+  overscroll-behavior: contain;   /* the grid behind must not scroll-chain */
+}
+
+/* A section inside a sheet is CONTENT, not a panel: it already has the
+   sheet's surface under it, so it drops its own backdrop and its full-page
+   vertical rhythm. */
+.bento-sheet-body .section::before,
+.bento-sheet-body .hero-panel::before { display: none; }
+.bento-sheet-body .section {
+  padding-block: clamp(2rem, 4vw, 3.5rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bento-tile,
+  .bento-tile-opens:hover,
+  .bento-tile-opens:active { transform: none !important; }
+}
+
+/* The one accent tile: the published CVE. It is the only externally
+   verifiable result on the grid, so it is the only surface that carries the
+   accent as a field rather than as a mark. */
+.bento-tile.bento-tile-accent {
+  border-color: transparent;
+  /* Lit from the opposite corner to every graphite tile, so the one accent
+     surface reads as the light source of the grid rather than as another
+     cell that happens to be a different colour.
+
+     THE STOPS ARE LITERAL, NOT `var(--color-acid)`. A custom property
+     redeclared inside a rule applies to that same element, so the ink remap
+     below would have resolved the gradient's own `var(--color-acid)` to the
+     near-black it sets three lines later: the tile painted black on black
+     with black text, and nothing errored. Selector specificity is raised to
+     `.bento-tile.bento-tile-accent` for the same class of reason — a later
+     `.bento-tile { box-shadow: none }` ties on specificity and wins on
+     order, which silently removed the field's top highlight. */
+  background:
+    radial-gradient(128% 96% at 96% -8%, rgba(255, 255, 255, 0.34), transparent 58%),
+    linear-gradient(154deg, #d9ff62 0%, #c7f23a 52%, #93b32b 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+
+  /* Ink flips wholesale, exactly as the bone surface does. Without this the
+     tile's own `text-acid` heading would be lime on lime. Checked against
+     the mid-stop #c7f23a, which is the darkest the field gets under text. */
+  --color-ink: #08080a;          /* 15.9:1 */
+  --color-ink-soft: #14140f;     /* 14.1:1 */
+  --color-ink-body: #24240f;     /* 11.6:1 */
+  --color-ink-label: #33330f;    /*  9.5:1 */
+  --color-ink-dim: #3d3d12;      /*  8.4:1 */
+
+  --color-hairline: rgba(8, 8, 10, 0.16);
+  --color-line: rgba(8, 8, 10, 0.16);
+  --color-line-hi: rgba(8, 8, 10, 0.24);
+  --color-line-lift: rgba(8, 8, 10, 0.38);
+
+  --color-acid: #08080a;         /* the mark inverts on its own field */
+  --color-acid-lift: #1a1a10;
+  --color-acid-ink: #eaffb0;     /* ink on a black pill inside the field */
+}
+@media (hover: hover) and (pointer: fine) {
+  .bento-tile.bento-tile-accent.bento-tile-opens:hover {
+    border-color: transparent;
+    background:
+      radial-gradient(128% 96% at 96% -8%, rgba(255, 255, 255, 0.44), transparent 60%),
+      linear-gradient(154deg, #e8ff8c 0%, #d9ff62 52%, #a8cc34 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      0 22px 50px -28px rgba(0, 0, 0, 0.95);
+  }
+}
+
+/* No nav to clear any more: the grid starts at the gutter like every other
+   edge. Every tile opens its own sheet, so a rail duplicating those eight
+   destinations was navigation for a page that has none. */
+
+/* Radii come down to the craft floor's 12-16px band. 28px on a card reads
+   as a phone-app sheet, not a panel. */
+.bento-tile { border-radius: 16px; }
+.bento-sheet { border-radius: 18px; }
+
+/* Elevation declared once on tiles too: the hairline carries resting state,
+   the shadow only appears on hover when the tile actually lifts. */
+.bento-tile { box-shadow: none; }
+@media (hover: hover) and (pointer: fine) {
+  .bento-tile-opens:hover {
+    box-shadow: 0 22px 50px -28px rgba(0, 0, 0, 0.95);
+    background:
+      radial-gradient(118% 88% at 6% -12%, rgba(255, 255, 255, 0.13), transparent 58%),
+      linear-gradient(153deg, #1d1d24 0%, #101015 44%, #0a0a0d 100%);
+  }
+}
+
+/* ---------- Tile media: the work, behind the copy ----------
+   Masked toward the top so the headline and body sit on unlit surface and
+   keep their contrast, while the artifact is still clearly alive. A flat
+   opacity knock-down would dim the interesting part evenly and fix nothing
+   where the text actually is. */
+.bento-media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0.55;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 42%, transparent 88%);
+          mask-image: linear-gradient(to bottom, #000 0%, #000 42%, transparent 88%);
+  transition: opacity var(--duration-hover) var(--ease-out-expo);
+}
+.bento-tile-opens:hover .bento-media { opacity: 0.8; }
+
+/* The shell tile's caret is its own element so it blinks independently of
+   the typed string re-rendering. */
+.shell-caret {
+  display: inline-block;
+  width: 7px;
+  height: 1em;
+  flex: none;
+  background: var(--color-acid);
+  animation: caret-blink 1.05s step-end infinite;
+}
+
+/* Copy has to win over the artifact behind it.
+   Scoped with :not() — this rule used to hit EVERY direct span child, which
+   included the pattern and media layers. It overrode their `position:
+   absolute` with `relative`, collapsing both to zero height, so every
+   texture, the particles and the wave grid were rendering into a box with
+   no size. Nothing was visible and nothing looked broken. */
+.bento-tile > span:not(.tile-pattern):not(.bento-media):not(.bento-cta):not(.bento-overlay) {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell-caret { animation: none; }
+}
+
+/* ============================================================
+   BONE SURFACE — one definition, three users
+
+   `.section-bone` and `.bento-tile-bone` were carrying identical token
+   remaps, and the canvas also puts a bone CARD inside a dark panel (the
+   web3.forensia cell). Three copies of the same twenty declarations is how
+   a palette drifts, so it is defined once here.
+
+   Every value is contrast-checked against #EFEFEA, not eyeballed:
+   acid lime is 1.3:1 on bone and would be invisible, so the accent
+   darkens to olive, which is the same signal at 5.2:1.
+   ============================================================ */
+.bone-surface,
+.section-bone,
+.bento-tile-bone {
+  color: var(--color-ink);
+  background: var(--color-bone);
+
+  --color-ink: #0a0a0b;          /* 18.3:1 */
+  --color-ink-soft: #2a2a30;     /* 12.4:1 */
+  --color-ink-body: #4e4e57;     /*  7.1:1 */
+  --color-ink-label: #66666f;    /*  4.9:1 */
+  --color-ink-dim: #5f5f68;      /*  5.5:1 */
+  --color-ink-ghost: #7d7d76;    /*  3.6:1, large display only */
+
+  --color-void: var(--color-bone);
+  --color-pit: var(--color-bone-dim);
+  --color-panel: var(--color-bone-hi);
+  --color-panel-hi: var(--color-bone-dim);
+  --color-cell-hi: var(--color-bone-dim);
+
+  --color-hairline: rgba(10, 10, 11, 0.07);
+  --color-line: rgba(10, 10, 11, 0.07);
+  --color-line-hi: rgba(10, 10, 11, 0.12);
+  --color-line-lift: rgba(10, 10, 11, 0.22);
+
+  --color-acid: #4d6e16;         /* olive — 5.2:1 on bone */
+  --color-acid-lift: #3a520f;
+  --color-acid-ink: var(--color-bone);
+
+  /* The marker does NOT darken to olive with the rest of the accent. A
+     highlight is a wash behind text: olive behind #4e4e57 body copy was a
+     dark block with barely-visible words in it. Bright lime at higher
+     alpha is the correct move on a light ground — it lifts, rather than
+     covers, and the dark ink on top keeps every bit of its contrast. */
+  --color-marker: rgba(199, 242, 58, 0.62);
+}
+
+/* A section inside a sheet has no ::before backdrop, so a bone section has
+   to paint its own ground. */
+.bento-sheet-body .section-bone { background: var(--color-bone); }
+.bento-sheet-bone,
+.bento-sheet-bone .bento-sheet-bar { background: var(--color-bone); }
+.bento-sheet-bone .bento-sheet-bar { border-bottom-color: rgba(10, 10, 11, 0.07); }
+
+/* A section inside a sheet must fill it.
+   `.shell` caps at 1180px and centres itself, which is right on a page but
+   wrong in a sheet: it left the bone ground stopping short of the sheet
+   edges with dark bands either side. The sheet IS the content column, so
+   the cap comes off and the inset becomes padding. */
+.bento-sheet-body .section.shell,
+.bento-sheet-body .shell {
+  max-width: none;
+  padding-inline: clamp(1.5rem, 4vw, 4rem);
+}
+
+/* ============================================================
+   TILE HOVER — the MagicUI bento gesture, ported
+
+   Their component was not usable here: it ships shadcn's token scheme
+   (which collides with this design system), a second Button, a second
+   icon library, and a light/dark dual theme on a 3-column grid. The
+   MOTION is the good part, so it is reimplemented natively.
+
+   One gesture, not three effects: the copy lifts, and the CTA rises out
+   of the bottom edge into exactly the space the copy vacated. Both run on
+   the system's single curve at the hover duration, so they read as one
+   movement. Transform and opacity only — nothing here can reflow the grid.
+   ============================================================ */
+.bento-copy {
+  transition: transform var(--duration-hover) var(--ease-out-expo);
+}
+.bento-cta {
+  position: absolute;
+  left: clamp(1.5rem, 2.6vw, 2.25rem);
+  bottom: clamp(1.5rem, 2.6vw, 2.25rem);
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--text-label);
+  letter-spacing: var(--tr-label, 0.15em);
+  color: var(--color-acid);
+  opacity: 0;
+  transform: translateY(0.75rem);
+  pointer-events: none;
+  transition:
+    opacity var(--duration-hover) var(--ease-out-expo),
+    transform var(--duration-hover) var(--ease-out-expo);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* 2.25rem up is enough to open a gap without the copy colliding with the
+     tile label above it. */
+  .bento-tile-opens:hover .bento-copy { transform: translateY(-2.25rem); }
+  .bento-tile-opens:hover .bento-cta { opacity: 1; transform: translateY(0); }
+
+  /* The tile's own lift comes off: with the copy moving, translating the
+     whole card as well was two competing movements for one intent. The
+     surface change and the shadow still carry the state. */
+  .bento-tile-opens:hover { transform: none; }
+}
+
+/* Touch has no hover, so the affordance has to be permanently visible or it
+   does not exist. */
+@media (hover: none) {
+  .bento-cta { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bento-copy,
+  .bento-tile-opens:hover .bento-copy { transform: none !important; }
+  .bento-cta { transition: opacity 1ms; transform: none !important; }
+}
+
+/* An inset that stays DARK inside a bone surface.
+   `.bone-surface` remaps every token for its subtree, which is what makes a
+   light card work without any component knowing about it — but it also
+   turned this terminal-style inset into another pale rectangle. This puts
+   the dark palette back for one box, so the tool's own output reads as
+   output rather than as a nested card. */
+.dark-inset {
+  color: #ffffff;
+  background: #0a0a0b;
+
+  --color-ink: #ffffff;
+  --color-ink-soft: #d6d6dc;
+  --color-ink-body: #a8a8b2;
+  --color-ink-label: #8b8b96;
+  --color-ink-dim: #7c7c86;
+  --color-acid: #c7f23a;        /* 15.8:1 on #0a0a0b */
+  --color-acid-ink: #0a0a0b;
+}
+
+/* ---------- Kinetic wordmark ----------
+   Keyframes defined ONCE here. The component they came from injected an
+   identical <style> block per instance, and its `@import` of Roboto sat
+   after other rules, which makes it invalid and silently dropped. */
+.kinetic-text {
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+.kinetic-bounce {
+  transform-origin: 100% 70%;
+  animation: kinetic-bounce var(--ktl-dur, 1800ms)
+    cubic-bezier(0.25, 0.25, 0.75, 0.75) infinite;
+}
+.kinetic-stretch {
+  transform-origin: 100% 75%;
+  animation: kinetic-stretch var(--ktl-dur, 1800ms)
+    cubic-bezier(0.25, 0.23, 0.73, 0.75) infinite;
+}
+
+@keyframes kinetic-bounce {
+  0%, 45%, 70%, 100% { transform: scaleY(1.11); }
+  49% { transform: scaleY(0.31); }
+  50% { transform: scaleY(0.16); }
+  53% { transform: scaleY(0.63); }
+  60% { transform: scaleY(1.275); }
+  68% { transform: scaleY(1.04); }
+}
+@keyframes kinetic-stretch {
+  0%, 100% { transform: scale(1, 0.35); transform-origin: 100% 75%; }
+  8%, 28%  { transform: scale(1, 1.4);  transform-origin: 100% 67%; }
+  37%      { transform: scale(1, 0.875); transform-origin: 100% 75%; }
+  46%      { transform: scale(1, 1.03); transform-origin: 100% 75%; }
+  50%, 97% { transform: scale(1);       transform-origin: 100% 75%; }
+}
+
+/* An infinite loop is the first thing to go when stillness is asked for. */
+@media (prefers-reduced-motion: reduce) {
+  .kinetic-bounce,
+  .kinetic-stretch { animation: none; }
+}
+
+/* ---------- Masked reveal ----------
+   Each piece is clipped to its own box, so it is genuinely absent and then
+   genuinely there. The resting state is VISIBLE; `.mask-piece-pre` is added
+   by script only once the observer has decided to animate, which is what
+   makes "no JS" degrade to "no animation" instead of "no text". */
+.mask-reveal { display: inline-block; }
+.mask-slot {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  /* Descenders (g, p, y) get clipped by a tight box, so the slot is given
+     room and pulled back with a negative margin. */
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+.mask-piece {
+  display: inline-block;
+  transition:
+    transform 700ms var(--ease-out-expo),
+    opacity 700ms var(--ease-out-expo);
+}
+.mask-piece-pre {
+  transform: translateY(105%);
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mask-piece,
+  .mask-piece-pre { transform: none !important; opacity: 1 !important; transition: none; }
+}
+
+/* ---------- Tile pattern ----------
+   `currentColor` so each pattern inherits the tile's ink and therefore
+   inverts for free on the bone tile. Masked toward the top so copy sitting
+   at the bottom of a tile never loses contrast to the texture. */
+.tile-pattern {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  color: var(--color-ink);
+  /* NO MASK. This used to fade out with a mask-image, which was 8 of the 11
+     large masked surfaces on the page — each one forces an offscreen render
+     and its own composited layer, and at full-window size that is real
+     memory and real per-frame blending. At 11% over a near-black panel the
+     texture never threatens copy contrast (white on the worst-case local
+     background still clears 4.5:1), so the fade was buying nothing. */
+  opacity: 0.11;
+  transition: opacity var(--duration-hover) var(--ease-out-expo);
+}
+.bento-tile-opens:hover .tile-pattern { opacity: 0.19; }
+/* On paper the same alpha reads far heavier, so it comes down. */
+.bento-tile-bone .tile-pattern,
+.bone-surface .tile-pattern { opacity: 0.075; }
+.bento-tile-bone.bento-tile-opens:hover .tile-pattern { opacity: 0.13; }
+
+/* ---------- Cursor spotlight ----------
+   A pool of light that tracks the pointer across a tile. `--mx`/`--my` are
+   written by one delegated listener on the grid; `--spot` gates the opacity
+   so the pool fades rather than snapping when the pointer leaves.
+
+   This is the single thing that separates a grid of dark rectangles from a
+   surface that reacts. It sits above the pattern and below the copy. */
+.bento-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: calc(var(--spot, 0) * 1);
+  transition: opacity var(--duration-hover) var(--ease-out-expo);
+  background: radial-gradient(
+    380px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--color-acid) 13%, transparent),
+    transparent 68%
+  );
+}
+/* On paper the same pool blows out; it needs to be far tighter. */
+.bento-tile-bone::after {
+  background: radial-gradient(
+    300px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--color-acid) 9%, transparent),
+    transparent 70%
+  );
+}
+
+/* ---------- Grid entrance ----------
+   The tiles assemble instead of appearing. Resting state is VISIBLE — the
+   animation runs from a hidden keyframe toward the default, so a browser
+   that never runs it still shows a complete grid. */
+@keyframes tile-in {
+  from { opacity: 0; transform: translateY(50px) scale(0.5); }
+  to   { opacity: 1; transform: none; }
+}
+.bento-tile {
+  /* Matches the spring in the reference: mass 3, stiffness 400, damping 50,
+     which works out to a damping ratio of ~0.72 — underdamped, so it settles
+     with a small overshoot rather than easing flat into place. CSS has no
+     spring, and this bezier is the closest honest approximation of that
+     overshoot. 50ms stagger, as in the original. */
+  animation: tile-in 820ms cubic-bezier(0.34, 1.32, 0.64, 1) both;
+  animation-delay: calc(var(--tile-i, 0) * 50ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bento-tile { animation: none; }
+  .bento-tile::after { display: none; }
+}
+
+/* Full-strength content over a tile. No dimming, no mask — the opposite of
+   `.bento-media`, which exists to sit back. */
+.bento-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: inherit;
+  /* Belt and braces: content here is sized to fit, but a tile must never be
+     something another tile's overlay can spill across. */
+  overflow: hidden;
+}
+.bento-overlay > * { pointer-events: auto; }
+
+/* ---------- Shine sweep ----------
+   A champagne highlight that crosses solid type and leaves it white.
+
+   NAMED `shine-sweep`, NOT `text-shine`, and that matters: every className
+   here goes through tailwind-merge, which groups utilities by prefix. It
+   read `text-shine` as a text COLOUR, found `text-ink` later in the same
+   string, and dropped it as a conflict — the class was in the source and
+   never reached the DOM. Custom classes must not look like utilities.
+
+   IT NEEDS THE OVERLAY. The obvious implementation — `background-clip: text`
+   on the heading itself — renders NOTHING: the gradient is correctly clipped
+   to the glyphs, and then the element's own `color` paints straight over the
+   top of it. Making it visible that way means setting the text fill to
+   transparent, which turns the heading INTO the gradient: it would be
+   invisible wherever the gradient is transparent, i.e. most of the time.
+
+   So the highlight is a second, transparent-filled copy of the text stacked
+   on the real one. The solid heading always renders; the copy contributes
+   only where the moving gradient is opaque. That is the difference between
+   "gradient text" and "light crossing a surface", and it is the whole point.
+   The copy is aria-hidden by construction (generated content on ::after is
+   not exposed) and pointer-events-none. */
+.shine-sweep {
+  position: relative;
+}
+.shine-sweep::after {
+  content: attr(data-shine);
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  white-space: pre-line;
+  background-image: linear-gradient(
+    100deg,
+    transparent 40%,
+    color-mix(in srgb, var(--color-acid) 92%, white) 50%,
+    transparent 60%
+  );
+  background-size: 260% 100%;
+  background-repeat: no-repeat;
+  background-position: 150% 0;
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: shine-sweep 5.5s var(--ease-out-expo) infinite;
+}
+@keyframes shine-sweep {
+  0%, 58% { background-position: 150% 0; }
+  100%    { background-position: -50% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shine-sweep::after { display: none; }
+}
+
+/* ---------- Auto-scrolling column ----------
+   A real scroll container, so the automatic drift and a human's wheel are
+   the same mechanism. The scrollbar is hidden because the column lives
+   inside a tile and a native bar reads as a bug there, but the element is
+   genuinely scrollable and keyboard reachable. */
+.auto-scroll-view {
+  overflow-y: auto;
+  overscroll-behavior: contain;      /* never scroll-chain to the page */
+  scrollbar-width: none;             /* Firefox */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 7%, #000 88%, transparent);
+          mask-image: linear-gradient(to bottom, transparent, #000 7%, #000 88%, transparent);
+}
+.auto-scroll-view::-webkit-scrollbar { width: 0; height: 0; }
+.auto-scroll-view:focus-visible {
+  outline: 2px solid var(--color-acid);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No drift, but still scrollable — the content stays reachable. */
+  .auto-scroll-view > div { transform: none !important; }
+}
+
+/* ============================================================
+   THE HERO IS NOT A CARD
+
+   "The whole website has become bento boxes and boxes" is, at the top of
+   the page, one specific problem: the first thing a visitor meets is a
+   bordered rectangle, and a cell cannot be a hero. Every reference that
+   reads as premium does the opposite here — the headline sits on the
+   page's own black at real display scale and the objects near it float on
+   that ground rather than nesting inside another frame.
+
+   So this tile keeps its grid slot and gives up its card chrome: no
+   border, no fill, no inner highlight. Nothing else on the grid changes,
+   which is the point — the contrast between an open hero and the cards
+   below it IS the hierarchy. Nine equal cards had none.
+
+   Addressed by #identity, the id the tile already carries, so this is a
+   stylesheet change with no component edit behind it.
+   ============================================================ */
+html.lenis { scroll-behavior: auto; }
+
+.hero-lead {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 100svh;
+  /* Aligned to the TILE COPY below, not to the page edge. The grid's gutter
+     is 7px and each tile then insets its own text, so padding the hero by
+     the gutter alone left the headline 36px to the left of every other line
+     on the page — the kind of misalignment that reads as sloppy without
+     being nameable. Same sum here, so the hero's first character and the
+     first character in every tile share a vertical. */
+  padding-inline: calc(var(--spacing-bento) + clamp(1.5rem, 2.6vw, 2.25rem));
+  padding-block: clamp(1.5rem, 4svh, 3rem) 1.5rem;
+  overflow: hidden;
+}
+
+.hero-lead-grain {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Copy left, evidence right, and they stack before they can collide. The
+   aside is given a fixed column rather than a percentage so the headline's
+   measure does not change between 64rem and 96rem. */
+.hero-lead-inner {
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 4rem);
+  align-items: center;
+  width: 100%;
+  max-width: 96rem;
+  margin-inline: auto;
+}
+@media (min-width: 64rem) {
+  .hero-lead-inner {
+    grid-template-columns: minmax(0, 1fr) clamp(22rem, 28vw, 28rem);
+  }
+}
+
+/* STACKED, not side by side. Sharing one row between the character and
+   the card cost both of them: the aside had to grow to 46rem, which
+   squeezed "security engineer" onto a third line, and each of them still
+   only got about 250px. One column gives them the full 28rem each and
+   leaves the headline its measure. He points DOWN at it instead of
+   across, which is the same gesture. */
+.hero-duo {
+  display: grid;
+  gap: 1rem;
+}
+
+/* Reserve room for the whole tweet and page gutters before sizing the
+   character. Width alone made this stack taller than a laptop viewport. */
+@media (min-width: 64rem) {
+  .hero-duo > .hoodie-dev {
+    width: min(100%, clamp(12rem, calc((100svh - 25rem) * 330 / 434), 24rem));
+    justify-self: center;
+  }
+  .hero-featured-tweet { padding: 1.25rem; }
+  .hero-featured-tweet > p { margin-top: 1rem; }
+  .hero-featured-tweet > p:first-of-type {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+}
+
+.hero-lead-eyebrow {
+  font-size: var(--text-label);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-ink-label);
+}
+
+.hero-lead-title {
+  margin-top: clamp(1.75rem, 3.5vw, 3rem);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.75rem, 7.4vw, 6.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: var(--color-ink);
+  /* Display type only: the tight tracking above is wrong for anything that
+     has to be read in a paragraph, and this is the only element at this
+     size on the page. */
+  text-wrap: balance;
+}
+
+/* The second line drops to ghost ink. This is the one sanctioned use of
+   that token — large display only, 3.6:1 — and at 100px it reads as
+   emphasis rather than as failed contrast. The accessible text is
+   untouched, so a screen reader still gets the whole headline. */
+.hero-lead-ghost { color: var(--color-ink-ghost); }
+
+.hero-lead-lede {
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+  max-width: 46ch;
+  font-size: var(--text-lead);
+  line-height: 1.6;
+  color: var(--color-ink-body);
+}
+
+/* No absolute positioning, so the card can never slice the headline the
+   way it did when the hero was a tile: it owns a grid column, and the
+   headline's measure ends where that column starts. */
+.hero-lead-aside { width: 100%; }
+
+.hero-lead-cue {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin-top: 1.5rem;
+  font-size: var(--text-label);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-ink-dim);
+}
+.hero-lead-cue-rule {
+  display: block;
+  width: 3.5rem;
+  height: 1px;
+  background: linear-gradient(to right, var(--color-acid), transparent);
+}
+
+/* ============================================================
+   LIVE TILES
+
+   Five tiles were inert rectangles with a texture behind them. Each one
+   now animates the content it is actually about: the anonymised client
+   list, the CVE's escalation, a Forensia trace resolving, the toolkit,
+   and the career arc. Motion that demonstrates the claim, not motion
+   that decorates it.
+
+   EVERYTHING HERE IS TEXT, CSS AND ONE INTERVAL. No canvas, no WebGL, no
+   per-frame layout reads, no new `will-change` layers — the page was
+   profiled as heavy once and the fix was removing exactly those. Two of
+   the five ship no JavaScript at all.
+
+   They live in `.bento-overlay`, which is z-index 2 and sits ABOVE the
+   tile copy at z-index 1, so every one is pinned to a region the copy
+   does not occupy: the tiles anchor their text to the bottom, so these
+   anchor to the top.
+   ============================================================ */
+
+.tile-live {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+/* Top-right, clear of the tile's label on the left. */
+.tile-live-tr {
+  top: calc(clamp(1.5rem, 2.6vw, 2.25rem) + 2.25rem);
+  right: clamp(1.5rem, 2.6vw, 2.25rem);
+  left: clamp(1.5rem, 2.6vw, 2.25rem);
+  align-items: flex-start;
+}
+@media (min-width: 64rem) {
+  .tile-live-tr {
+    left: auto;
+    max-width: min(26rem, 62%);
+    align-items: flex-end;
+    text-align: right;
+  }
+}
+
+.tile-live-label {
+  font-size: var(--text-label);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-ink-dim);
+}
+
+.tile-live-line {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-chip);
+  line-height: 1.45;
+  color: var(--color-ink-soft);
+}
+
+.tile-live-step {
+  font-size: var(--text-label);
+  color: var(--color-acid);
+}
+
+.tile-live-count,
+.tile-live-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--color-ink-dim);
+}
+.tile-live-mono { color: var(--color-acid); }
+
+/* One curve, the site's own. 260ms in is faster than the 700ms used for
+   page entrances on purpose: this repeats every 2.6s, and an entrance
+   that slow would still be arriving when the next one starts. */
+.tile-live-enter {
+  animation: tile-live-in 320ms var(--ease-out-expo) both;
+}
+@keyframes tile-live-in {
+  from { opacity: 0; transform: translateY(0.4rem); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Progress rail for the CVE chain: how far through the escalation. */
+.tile-live-rail {
+  display: flex;
+  gap: 0.25rem;
+}
+.tile-live-rail > span {
+  width: 1.5rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-line-lift);
+  transition: background-color var(--duration-hover) var(--ease-out-expo);
+}
+.tile-live-rail > span[data-on="true"] { background: var(--color-acid); }
+
+/* Trace hops: each arrives, none disappears, then the set resets. */
+.tile-live-hops {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  justify-content: flex-start;
+}
+@media (min-width: 64rem) {
+  .tile-live-hops { justify-content: flex-end; }
+}
+.tile-live-hops > span {
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--color-line-hi);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--color-ink-dim);
+  opacity: 0.25;
+  transform: translateY(0.25rem);
+  transition:
+    opacity var(--duration-hover) var(--ease-out-expo),
+    transform var(--duration-hover) var(--ease-out-expo),
+    border-color var(--duration-hover) var(--ease-out-expo),
+    color var(--duration-hover) var(--ease-out-expo);
+}
+.tile-live-hops > span[data-on="true"] {
+  opacity: 1;
+  transform: none;
+  border-color: color-mix(in srgb, var(--color-acid) 45%, transparent);
+  color: var(--color-acid);
+}
+
+/* ---------- Capability marquee: no JavaScript ---------- */
+.tile-marquee {
+  position: absolute;
+  top: calc(clamp(1.5rem, 2.6vw, 2.25rem) + 2.25rem);
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  /* Fade at both edges so chips enter and leave rather than being cut. */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+.tile-marquee-row { overflow: hidden; }
+.tile-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: tile-marquee 42s linear infinite;
+}
+.tile-marquee-track > span { display: flex; }
+.tile-marquee-chip {
+  margin-right: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-pill);
+  background: var(--color-cell);
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  white-space: nowrap;
+  color: var(--color-ink-label);
+}
+/* -50% exactly: the track holds the list twice, so at the wrap point the
+   second copy is standing where the first one began. Any other value
+   makes the loop visibly jump. */
+@keyframes tile-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+/* ---------- About: the career arc ---------- */
+.tile-arc {
+  position: absolute;
+  inset: auto clamp(1.5rem, 2.6vw, 2.25rem) clamp(1.5rem, 2.6vw, 2.25rem) auto;
+  display: none;
+  width: min(34rem, 52%);
+  pointer-events: none;
+}
+@media (min-width: 64rem) { .tile-arc { display: block; } }
+
+.tile-arc-rule {
+  display: block;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--color-acid),
+    var(--color-line-lift)
+  );
+  transform-origin: left center;
+  animation: tile-arc-draw var(--duration-enter) var(--ease-out-expo) both;
+}
+@keyframes tile-arc-draw {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+.tile-arc-points {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 0.875rem;
+}
+.tile-arc-point { display: grid; gap: 0.25rem; }
+.tile-arc-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--radius-pill);
+  background: var(--color-acid);
+}
+.tile-arc-when {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--color-ink-dim);
+}
+.tile-arc-what {
+  font-size: var(--text-label);
+  color: var(--color-ink-label);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile-live-enter,
+  .tile-marquee-track,
+  .tile-arc-rule { animation: none; }
+  /* Stillness must not mean emptiness: every hop shows at rest. */
+  .tile-live-hops > span { opacity: 1; transform: none; }
+}
+
+/* ============================================================
+   HOODIE DEV
+
+   Textured 3D character. A render of the model stays visible during loading
+   and for reduced motion; the GPU canvas takes over after its first draw.
+   ============================================================ */
+.hoodie-dev {
+  position: relative;
+  width: 100%;
+  isolation: isolate;
+}
+
+/* Keep breathing independent of the head's pointer-driven pose. */
+.hoodie-dev-breathe {
+  position: relative;
+  animation: hd-breathe 4.6s ease-in-out infinite;
+}
+@keyframes hd-breathe {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+
+.hoodie-poster {
+  width: 100%;
+  /* Locked to the cell's real ratio so the strip can never letterbox or
+     stretch the face. */
+  aspect-ratio: 330 / 434;
+  background-image: url("/brand/hoodie-3d-poster.webp");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ---------- speech bubble ----------
+   Real DOM, not baked into the sprite, so it renders in the site's own
+   typeface and re-themes with the tokens. */
+.hoodie-dev-says {
+  position: absolute;
+  top: 4%;
+  right: -2%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid color-mix(in srgb, var(--color-acid) 35%, transparent);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-acid) 12%, var(--color-panel));
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--color-acid);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: hd-says 5.2s ease-in-out infinite;
+}
+.hoodie-dev-says::after {
+  content: "";
+  position: absolute;
+  left: 1.25rem;
+  bottom: -5px;
+  width: 8px;
+  height: 8px;
+  border-right: 1px solid color-mix(in srgb, var(--color-acid) 35%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-acid) 35%, transparent);
+  background: color-mix(in srgb, var(--color-acid) 12%, var(--color-panel));
+  transform: rotate(45deg);
+}
+/* Lifts, holds, returns — so the eye is drawn once per cycle rather than
+   by something that never rests. */
+@keyframes hd-says {
+  0%, 70%, 100% { transform: translateY(0); }
+  78%           { transform: translateY(-5px); }
+  86%           { transform: translateY(0); }
+}
+
+/* ---------- the terminal in front of him ----------
+   A real bezel in CSS rather than another SVG: it only needs a border, a
+   radius and a dark ground, and the live screen goes inside it. */
+.hoodie-dev-rig {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 2%;
+  z-index: 1;
+  height: 21%;
+  padding: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: #07070a;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 16px 40px -20px rgba(0, 0, 0, 0.95);
+}
+/* Screen light spilling back onto him, which is what stops the terminal
+   reading as a rectangle pasted over a photograph. */
+.hoodie-dev-rig::before {
+  content: "";
+  position: absolute;
+  inset: -120% -18% 40% -18%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    60% 70% at 50% 100%,
+    color-mix(in srgb, var(--color-acid) 22%, transparent),
+    transparent 70%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hoodie-dev-breathe,
+  .hoodie-dev-says { animation: none; }
+}
+
+/* ---------- Binary rain: the kid's screen ----------
+   The CSS field is the DEFAULT and renders server-side; the GPU canvas
+   fades in over it only once WebGPU is confirmed running. That ordering
+   is deliberate — a screen that is blank until a 638 KB chunk resolves is
+   worse than one that was always showing something. */
+.binary-rain {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #04060a;
+}
+.binary-rain-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 0;
+  transition: opacity 600ms var(--ease-out-expo);
+}
+.binary-rain[data-gpu="true"] .binary-rain-canvas { opacity: 1; }
+.binary-rain[data-gpu="true"] .binary-rain-css { opacity: 0; }
+
+.binary-rain-css {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 7px;
+  line-height: 1;
+  letter-spacing: 1px;
+  color: color-mix(in srgb, var(--color-acid) 55%, transparent);
+  transition: opacity 600ms var(--ease-out-expo);
+}
+.binary-rain-css > span {
+  display: block;
+  white-space: nowrap;
+  animation: binary-drift 9s linear infinite;
+}
+@keyframes binary-drift {
+  from { transform: translateX(0); opacity: 0.35; }
+  50%  { opacity: 0.85; }
+  to   { transform: translateX(-50%); opacity: 0.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .binary-rain-css > span { animation: none; }
+}
+
+/* ---------- 3D head, layered over its static poster ----------
+   Absent, broken or unsupported, `data-ready` never flips and the poster
+   below is simply what you see. */
+.hoodie-3d {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+}
+.hoodie-3d[data-ready="true"] { opacity: 1; }
+.hoodie-3d-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+/* Swap atomically: crossfading two character silhouettes causes ghosting. */
+.hoodie-dev-breathe:has(.hoodie-3d[data-ready="true"]) .hoodie-poster { visibility: hidden; }

@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored scripts inside installed agent skills are not ours to lint;
+    // they were adding ~94 warnings to every run.
+    ".agents/**",
   ]),
 ]);
 

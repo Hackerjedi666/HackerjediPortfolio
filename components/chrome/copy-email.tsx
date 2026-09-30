@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy } from "@phosphor-icons/react/dist/ssr";
 
 /**
  * Copy-to-clipboard for the footer address.
@@ -34,9 +34,9 @@ export function CopyEmail({ email }: { email: string }) {
       className="mb-9 inline-flex min-h-11 items-center gap-2.5 py-2 text-micro tracking-[0.16em] text-ink-label transition-colors hover:text-acid"
     >
       {copied ? (
-        <Check size={13} strokeWidth={1.75} aria-hidden="true" className="text-acid" />
+        <Check size={13} weight="bold" aria-hidden="true" className="text-acid" />
       ) : (
-        <Copy size={13} strokeWidth={1.75} aria-hidden="true" />
+        <Copy size={13} weight="bold" aria-hidden="true" />
       )}
       {/* aria-live so the confirmation is announced, not just shown. */}
       <span aria-live="polite">{copied ? "COPIED TO CLIPBOARD" : "COPY EMAIL ADDRESS"}</span>

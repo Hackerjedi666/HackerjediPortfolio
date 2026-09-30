@@ -76,7 +76,7 @@ const WIDE: Layout = {
   grid: 8,
   r: 3.2,
   type: { label: 2.4, sub: 2, edge: 1.9, title: 2.6 },
-  title: "Shortest path to domain admin — 3 hops, 0 exploits",
+  title: "Shortest path to domain admin: 3 hops, 0 exploits",
   titleAt: { x: 5, y: 8 },
   pos: {
     ws: { x: 18, y: 50 },

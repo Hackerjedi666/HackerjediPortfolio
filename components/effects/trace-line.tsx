@@ -22,8 +22,8 @@ import { canAnimate } from "@/lib/stage/capability";
  * The path is drawn with `preserveAspectRatio="none"` so the serpentine
  * stretches to any document height, and anything drawn inside that viewBox
  * inherits the same distortion — a circle would render as a squashed
- * ellipse. Projecting the path point out to screen space with `getScreenCTM`
- * and positioning a plain div keeps the node perfectly round.
+ * ellipse. Projecting through cached SVG bounds and positioning a plain
+ * div keeps the node round without measuring layout during scroll.
  */
 
 /** Serpentine down a normalised 100 × 1000 viewBox. */
@@ -59,6 +59,16 @@ export function TraceLine() {
     const head = headRef.current;
     if (!path || !hot || !head || !canAnimate()) return;
 
+    const svg = path.ownerSVGElement!;
+    let bounds = svg.getBoundingClientRect();
+    let documentTop = bounds.top + window.scrollY;
+    const measure = () => {
+      bounds = svg.getBoundingClientRect();
+      documentTop = bounds.top + window.scrollY;
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(svg);
+
     const ctx = gsap.context(() => {
       const length = path.getTotalLength();
       gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
@@ -75,10 +85,11 @@ export function TraceLine() {
         hot.style.strokeDashoffset = String(HOT_SEGMENT - drawn);
 
         const point = path.getPointAtLength(drawn);
-        const matrix = path.getScreenCTM();
-        if (!matrix) return;
-        const screen = point.matrixTransform(matrix);
-        head.style.transform = `translate(${screen.x}px, ${screen.y}px)`;
+        // The viewBox stretches without preserving aspect ratio. Cache its
+        // projection on resize instead of forcing layout after every write.
+        const x = bounds.left + point.x * bounds.width / 100;
+        const y = documentTop + point.y * bounds.height / 1000 - window.scrollY;
+        head.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 
         // Hide at both ends — a reticle pinned to the very top of the page
         // before you've scrolled reads as a bug, not as a feature.
@@ -104,11 +115,12 @@ export function TraceLine() {
 
     // The path's length depends on the document height, which changes as
     // fonts land and sections reflow.
-    const onResize = () => ScrollTrigger.refresh();
+    const onResize = () => { measure(); ScrollTrigger.refresh(); };
     window.addEventListener("resize", onResize);
 
     return () => {
       window.removeEventListener("resize", onResize);
+      observer.disconnect();
       ctx.revert();
     };
   }, []);
@@ -156,8 +168,7 @@ export function TraceLine() {
         </svg>
       </div>
 
-      {/* Head node. Fixed, so `getScreenCTM` screen coordinates apply
-          directly with no further conversion. */}
+      {/* Head node. Fixed, so the cached projection subtracts page scroll. */}
       <div
         ref={headRef}
         aria-hidden="true"

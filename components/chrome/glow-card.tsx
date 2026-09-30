@@ -74,9 +74,14 @@ export function GlowCard({
     if (!el || !canAnimate()) return;
 
     const ctx = gsap.context(() => {
-      const ease = "power3.out";
-      quick.current.rx = gsap.quickTo(el, "rotateX", { duration: 0.6, ease });
-      quick.current.ry = gsap.quickTo(el, "rotateY", { duration: 0.6, ease });
+      // GSAP's own transform channels are `rotationX`/`rotationY`. Passing the
+      // CSS names (`rotateX`) drops them out of GSAP's consolidated transform
+      // and into generic property handling — it logged "not eligible for
+      // reset" on every pointer move and made the tilt fight the lift on the
+      // same element. These three now write one matrix.
+      const ease = "expo.out";
+      quick.current.rx = gsap.quickTo(el, "rotationX", { duration: 0.6, ease });
+      quick.current.ry = gsap.quickTo(el, "rotationY", { duration: 0.6, ease });
       quick.current.y = gsap.quickTo(el, "y", { duration: 0.6, ease });
       if (sheenRef.current) {
         quick.current.sheen = gsap.quickTo(sheenRef.current, "xPercent", {
@@ -137,7 +142,7 @@ export function GlowCard({
       <span
         ref={glowRef}
         aria-hidden="true"
-        className="pointer-events-none absolute left-0 top-0 rounded-full opacity-0 transition-opacity duration-200 will-change-transform"
+        className="pointer-events-none absolute left-0 top-0 rounded-full opacity-0 transition-opacity duration-400 ease-out-expo will-change-transform"
         style={{
           width: size,
           height: size,

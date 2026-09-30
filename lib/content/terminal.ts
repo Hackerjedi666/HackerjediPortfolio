@@ -6,7 +6,7 @@ import { PORTFOLIO_DATA } from "@/lib/content/portfolio-data";
 import { EMAIL, SOCIALS, WALL_POSTS, POST_COUNT, FORENSIA_URL } from "@/lib/content/site";
 
 export const BANNER: string[] = [
-  "overwatchlabs shell v2.1 — abhimanyu gupta",
+  "overwatchlabs shell v2.1 · abhimanyu gupta",
   "type 'help' for commands. type 'flag' if you think you're clever.",
   "",
 ];
@@ -91,8 +91,8 @@ export function respond(raw: string): string[] | null {
     case "whoami":
       return [
         "abhimanyu gupta / hackerjedi",
-        "founder — overwatchlabs.ai",
-        "4+ years offensive security: red team, appsec, TEE research",
+        "founder · overwatchlabs.ai",
+        "offensive security: red team, appsec, TEE research",
         "OSCP · eCPPT · eJPT · CND",
         "currently: shipping Forensia",
         "",
@@ -121,7 +121,7 @@ export function respond(raw: string): string[] | null {
 
     case "forensia":
       return [
-        "FORENSIA — threat intel that doesn't drown you.",
+        "FORENSIA · threat intel that doesn't drown you.",
         "",
         "  continuous external discovery",
         "  attack paths, not finding lists",
@@ -176,7 +176,7 @@ export function respond(raw: string): string[] | null {
 
     case "sudo":
       return [
-        "nice try. you're not on the sudoers list — this incident has been reported.",
+        "nice try. you're not on the sudoers list. this incident has been reported.",
         "(hint: the konami code is a better idea)",
         "",
       ];
@@ -198,7 +198,7 @@ export function respond(raw: string): string[] | null {
     case "cat":
       return [
         lower.includes("secret")
-          ? "permission denied — but try 'flag'"
+          ? "permission denied. but try 'flag'"
           : "cat: no such file or directory",
         "",
       ];

@@ -1,84 +1,97 @@
-import { CAPABILITIES, TOOLBELT } from "@/lib/content/site";
-import { GlowCard } from "@/components/chrome/glow-card";
-import { ConnectedGrid, ConnectedItem } from "@/components/effects/connected-grid";
 import { SectionHead } from "@/components/sections/section-head";
+import { DISCIPLINES } from "@/lib/content/site";
 
 /**
- * Placement on the 8-column track. The alternating left/right rhythm is not
- * decoration — ConnectedGrid reads each card's offset against the previous
- * one to decide which edge it unfolds from, so this layout *is* the
- * animation's choreography.
+ * Capability — the resume's full technical surface, not a shortlist.
+ *
+ * This section used to show four capability tiles, which read as though the
+ * work stopped at four things. The resume carries four distinct technical
+ * disciplines, three delivery competencies and four certifications, and the
+ * breadth IS the argument for a security engineer: a buyer is checking
+ * whether one person covers app, infra, adversary simulation and the
+ * engineering to automate all of it.
+ *
+ * Presented as disciplines with their real tooling rather than a tag cloud,
+ * because "Burp Suite" next to "OSINT" next to "Next.js" with no grouping
+ * tells a reader nothing about what this person is actually for.
  */
-const PLACEMENT = [
-  { col: 1, span: 4 },
-  { col: 5, span: 4 },
-  { col: 2, span: 4 },
-  { col: 5, span: 4 },
+
+/** How the work is actually delivered — the half buyers ask about second. */
+const DELIVERY = [
+  {
+    name: "Security testing",
+    items:
+      "Web, APIs, mobile, internal and external networks, Active Directory, source code, configuration",
+  },
+  {
+    name: "Offensive operations",
+    items:
+      "Assumed-breach testing, attack-path analysis, phishing simulation, defence-evasion validation, controlled exploitation, privilege escalation",
+  },
+  {
+    name: "Delivery",
+    items:
+      "Scoping, rules of engagement, risk validation, proof-of-concept development, technical reporting, stakeholder debriefs, remediation and retesting",
+  },
 ];
+
+const CERTS = ["OSCP", "eCPPT", "eJPT", "Certified Network Defender"];
+
+const CARD =
+  "flex flex-col rounded-cell border border-hairline bg-panel-hi p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]";
 
 export function Stack() {
   return (
     <section id="stack" aria-labelledby="stack-title" className="section shell">
-      <SectionHead index="03" label="WHAT I ACTUALLY DO" tone="ink">
+      <SectionHead label="CAPABILITY" tone="ink">
         <span id="stack-title">
-          Four things,
+          Four disciplines.
           <br />
-          done properly.
+          One toolkit.
         </span>
       </SectionHead>
 
-      <ConnectedGrid className="tilt-scene mt-16">
-        {CAPABILITIES.map((c, i) => (
-          <ConnectedItem key={c.index} col={PLACEMENT[i].col} span={PLACEMENT[i].span}>
-            {/* The hinge target is this wrapper, not the GlowCard itself:
-                GlowCard's tilt already owns its own transform, and two
-                animations writing the same property would fight. */}
-            <div data-cg-surface>
-              <GlowCard
-                size={300}
-                intensity={0.13}
-                className="border border-line-hi bg-panel p-7 transition-colors duration-300 hover:border-acid"
-              >
-                <div data-cg-content>
-                  <div data-cg-header className="flex items-baseline justify-between gap-4">
-                    {/* Oversized ghost numeral — structure, not decoration:
-                        it is the only thing separating four otherwise
-                        identical tiles at a glance. */}
-                    <p
-                      aria-hidden="true"
-                      className="font-display text-[40px] font-bold leading-none text-line-hi"
-                    >
-                      {c.index}
-                    </p>
-                    <span className="h-px flex-1 bg-line" />
-                  </div>
-                  <h3 className="mt-7 mb-3 font-display text-h4 font-bold">{c.title}</h3>
-                  <p className="mb-4 text-sm text-ink-body">{c.body}</p>
-                  <ul className="grid gap-[7px] text-chip tracking-[0.06em] text-ink-label">
-                    {c.points.map((p) => (
-                      <li key={p}>
-                        <span aria-hidden="true">→ </span>
-                        {p}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </GlowCard>
-            </div>
-          </ConnectedItem>
+      <div className="mt-14 grid gap-3 lg:grid-cols-2">
+        {DISCIPLINES.map((d) => (
+          <article key={d.name} className={CARD}>
+            <h3 className="text-h4 font-bold text-ink">{d.name}</h3>
+            <p className="mt-4 max-w-[52ch] text-body text-ink-body">{d.blurb}</p>
+            <ul className="mt-auto flex flex-wrap gap-2 pt-8">
+              {d.tools.map((t) => (
+                <li
+                  key={t}
+                  className="rounded-pill border border-hairline px-4 py-2.5 text-chip text-ink"
+                >
+                  {t}
+                </li>
+              ))}
+            </ul>
+          </article>
         ))}
-      </ConnectedGrid>
+      </div>
 
-      <ul className="reveal-fade mt-16 flex flex-wrap gap-2.5">
-        {TOOLBELT.map((t) => (
-          <li
-            key={t}
-            className="border border-line-hi px-3.5 py-2.5 text-label tracking-[0.1em] text-ink-dim transition-colors duration-200 hover:border-acid hover:text-acid"
-          >
-            {t}
-          </li>
+      <div className="mt-3 grid gap-3 md:grid-cols-3">
+        {DELIVERY.map((d) => (
+          <div key={d.name} className="rounded-cell bg-cell-hi p-6">
+            <h3 className="text-label text-acid">{d.name}</h3>
+            <p className="mt-4 text-chip leading-relaxed text-ink-body">{d.items}</p>
+          </div>
         ))}
-      </ul>
+      </div>
+
+      <div className="mt-14 flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-hairline pt-10">
+        <p className="text-label text-ink-label">Certified</p>
+        <ul className="flex flex-wrap gap-2">
+          {CERTS.map((c) => (
+            <li
+              key={c}
+              className="rounded-pill border border-acid/25 px-4 py-2.5 text-label text-acid"
+            >
+              {c}
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 }

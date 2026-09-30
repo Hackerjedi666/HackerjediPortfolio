@@ -119,7 +119,11 @@ export const INK_DEFAULTS: InkFluidConfig = {
   // than a soft haze. That crisp liquid-metal edge is the whole character of
   // this effect; feathering it turns it into generic smoke.
   edgeSoftness: 0.0,
-  inkColor: new THREE.Color(0.761, 1.0, 0.271), // --color-acid #c2ff45
+  /* Overridden at construction from the live `--color-acid` (see global-ink).
+     This literal is only the fallback if that read fails — it used to be the
+     acid green, which is why a green blob survived the palette change in the
+     one effect that does not read CSS. */
+  inkColor: new THREE.Color(0.7804, 0.949, 0.2275), // acid lime #C7F23A
 };
 
 type Double = {
@@ -139,6 +143,8 @@ export class InkFluid {
   private width = 1;
   private height = 1;
   private dpr = 1;
+  private idleSeconds = 3;
+  private accumulatedTime = 0;
 
   private simSize = { w: 1, h: 1 };
   private dyeSize = { w: 1, h: 1 };
@@ -364,6 +370,16 @@ export class InkFluid {
   /** Advance one frame. Driven by the shared ticker, not an internal rAF. */
   step(dt: number) {
     if (this.disposed || !this.velocity) return;
+    // The fluid has no visible dye left after three seconds without input.
+    // Avoid dozens of GPU passes per frame on a still page, and cap this
+    // background effect at 60 Hz on 120/144 Hz displays.
+    if (this.mouse.moved) this.idleSeconds = 0;
+    else this.idleSeconds += dt;
+    if (this.idleSeconds > 3) return;
+    this.accumulatedTime += dt;
+    if (this.accumulatedTime < 1 / 60) return;
+    dt = this.accumulatedTime;
+    this.accumulatedTime %= 1 / 60;
     const m = this.material;
     const c = this.config;
     const clamped = Math.min(dt, 0.016);

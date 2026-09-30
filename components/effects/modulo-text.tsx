@@ -79,8 +79,8 @@ export function ModuloText({ text, className, fontSize = 68 }: Props) {
     if (!ctx) return;
 
     const styles = getComputedStyle(host);
-    const inkColor = styles.getPropertyValue("--color-ink").trim() || "#f2f2f2";
-    const acidColor = styles.getPropertyValue("--color-acid").trim() || "#c2ff45";
+    const inkColor = styles.getPropertyValue("--color-ink").trim() || "#ffffff";
+    const acidColor = styles.getPropertyValue("--color-acid").trim() || "#c7f23a";
     // Custom properties resolve to concrete font stacks at computed-value
     // time, so these are safe to hand to `ctx.font` — a raw `var()` in a
     // canvas font string is invalid and silently keeps the previous font.

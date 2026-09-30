@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { Color } from "three";
 import { InkFluid } from "@/lib/effects/ink-fluid";
 import { subscribe } from "@/lib/stage/ticker";
 
@@ -17,7 +18,12 @@ export default function InkCanvas({ hostRef }: { hostRef: React.RefObject<HTMLDi
     const canvas = canvasRef.current;
     if (!host || !canvas) return;
 
-    const fluid = new InkFluid(canvas, host);
+    // Read the accent off the live CSS token, exactly like the card shader and
+    // the modulo canvas do. This was the ONLY effect carrying a hardcoded
+    // colour, which is why it kept painting acid green after the palette
+    // moved to champagne.
+    const css = getComputedStyle(host).getPropertyValue("--color-acid").trim();
+    const fluid = new InkFluid(canvas, host, css ? { inkColor: new Color(css) } : {});
     const unsubscribe = subscribe((dt) => fluid.step(dt));
 
     return () => {

@@ -1,7 +1,8 @@
 import { EMAIL, SOCIALS, META } from "@/lib/content/site";
 import { MagneticLink } from "@/components/chrome/magnetic-link";
 import { CopyEmail } from "@/components/chrome/copy-email";
-import { ModuloText } from "@/components/effects/modulo-text";
+import { MaskReveal } from "@/components/chrome/mask-reveal";
+import { KineticLetters } from "@/components/chrome/kinetic-letters";
 
 const LINKS = [
   { href: SOCIALS.twitter, label: "X / TWITTER" },
@@ -13,22 +14,35 @@ export function SiteFooter() {
   return (
     <footer
       id="contact"
-      className="relative z-[1] border-t border-hairline bg-[linear-gradient(rgba(0,0,0,0.4),#060606)] px-gutter pb-10 pt-35"
+      className="relative z-[1] border-t border-hairline bg-[linear-gradient(color-mix(in_srgb,var(--color-void)_60%,transparent),var(--color-panel))] px-gutter pb-10 pt-35"
     >
       <div className="mx-auto w-full max-w-[77.5rem]">
-        <p className="mb-5 text-label tracking-[0.26em] text-acid">LET&apos;S TALK</p>
+        <p className="mb-5 text-label text-acid">
+          <MaskReveal text="LET'S TALK" by="char" stagger={28} />
+        </p>
 
-        {/* The address, rendered as a live ASCII cell grid that scatters
-            away from the cursor. No longer a mailto link — it reads as an
-            artefact to play with rather than a button to click. */}
-        <ModuloText
-          text={EMAIL}
-          fontSize={68}
-          className="mb-9 w-full select-none"
-        />
+        {/* REAL TEXT, not a canvas.
+            This was a <ModuloText> cell grid that scattered away from the
+            cursor. It looked good when it ran — but it only ran once the
+            stage tier allowed it and a frame had ticked, so when it did not,
+            the page's single most important line was simply absent. It also
+            could not be selected, which is the one thing a visitor wants to
+            do with an address.
 
-        {/* Because the address above is drawn on a canvas it can't be
-            selected, so this is the way to actually take it away. */}
+            The address is now a plain mailto link in display type: visible
+            at first paint, selectable, keyboard reachable, and still the
+            largest thing in the footer. */}
+        <a
+          href={`mailto:${EMAIL}`}
+          className="mt-8 block break-all font-display text-venture font-bold text-ink transition-colors duration-400 ease-out-expo hover:text-acid"
+        >
+          {/* Letters thicken under the pointer and push their neighbours.
+              The <a> still carries the real address, so this is decoration
+              over a working link, never instead of one. */}
+          <KineticLetters text={EMAIL} />
+        </a>
+
+        {/* Copying beats retyping an address this long. */}
         <CopyEmail email={EMAIL} />
 
         {/* Socials take the strongest magnetic pull on the page — this is
@@ -46,7 +60,7 @@ export function SiteFooter() {
               {l.label}
             </MagneticLink>
           ))}
-          <span className="ml-auto">{META.location.toUpperCase()} · UTC+5:30</span>
+          <span className="ml-auto">UTC+5:30</span>
           <span>© 2026 {META.name.toUpperCase()}</span>
         </div>
       </div>

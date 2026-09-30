@@ -1,0 +1,7 @@
+.agents/
+.claude/
+art/
+tools/
+backups/
+.env*
+*.tsbuildinfo

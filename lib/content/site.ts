@@ -24,16 +24,20 @@ export const OVERWATCH_URL = "https://overwatchlabs.ai";
 /* ------------------------------------------------------------------ */
 
 export const HERO = {
+  name: META.name,
+  location: "India",
   handle: "abhimanyu_gupta",
   org: "OVERWATCHLABS.AI",
   role: "FOUNDER // OFFENSIVE SECURITY",
-  headline: ["I break in", "before they do."] as const,
-  lede: "Red teamer turned founder. Four years of assumed-breach ops against banks, insurers and state platforms — now building Forensia so companies can see their attack surface the way I do.",
-  stats: [
-    { value: "4+", label: "YEARS RED TEAM", accent: false },
-    { value: "130+", label: "APPS & APIS BROKEN", accent: false },
-    { value: "1", label: "CVE PUBLISHED", accent: true },
-  ],
+  /* Matches the design canvas. The previous pair ("I break in" /
+     "before they do.") was a claim; this one is the role, which is what a
+     buyer scans the top of the page for. */
+  headline: ["Offensive", "security engineer"] as const,
+  /* The identity tile's paragraph. It reads as a founder bio rather than a
+     capability list because the tile already sits under the word "engineer":
+     what a visitor does not yet know at that point is that the engineer runs
+     the practice and built the product, alone. */
+  lede: "Solopreneur. I founded Overwatch Labs for the offensive work: red teaming, assumed breach, application and API security. Then built Forensia to turn scattered indicators into threat intelligence. OSCP, and I ship the tooling myself.",
 } as const;
 
 /* ------------------------------------------------------------------ */
@@ -99,7 +103,7 @@ export const OPS: Op[] = [
       },
       {
         label: "APPROACH",
-        body: "Large-scale application and API testing paired with configuration review — surfacing source-code disclosure, PII exposure and RCE paths.",
+        body: "Large-scale application and API testing paired with configuration review, surfacing source-code disclosure, PII exposure and RCE paths.",
       },
       {
         label: "OUTCOME",
@@ -137,7 +141,7 @@ export const OPS: Op[] = [
       },
       {
         label: "IMPACT",
-        body: "Drove changes to mail filtering, user awareness and app-layer defences — with a measurable drop in click-through.",
+        body: "Drove changes to mail filtering, user awareness and app-layer defences, with a measurable drop in click-through.",
       },
     ],
   },
@@ -191,26 +195,26 @@ export const KILL_CHAIN: KillChainStep[] = [
     step: "STEP 01",
     phase: "RECON",
     title: "Map the internal, quietly",
-    body: "One low-privilege workstation to start. Enumerated the domain with living-off-the-land tooling only — nothing dropped to disk, no telemetry worth an alert.",
+    body: "One low-privilege workstation to start. Enumerated the domain with living-off-the-land tooling only. Nothing dropped to disk, no telemetry worth an alert.",
   },
   {
     step: "STEP 02",
     phase: "EVASION",
     title: "Write a payload the EDR likes",
-    body: "Off-the-shelf loaders died instantly. Built a custom one — fresh syscalls, no known signatures, sleep obfuscation — and got a beacon that survived a full working day.",
+    body: "Off-the-shelf loaders died instantly. Built a custom one with fresh syscalls, no known signatures and sleep obfuscation, then got a beacon that survived a full working day.",
   },
   {
     step: "STEP 03",
     phase: "IDENTITY",
     title: "Follow the trust, not the CVEs",
-    body: "BloodHound turned a flat network into a graph. Weak delegation on a forgotten service account was the shortest path to a domain controller — three hops, zero exploits.",
+    body: "BloodHound turned a flat network into a graph. Weak delegation on a forgotten service account was the shortest path to a domain controller. Three hops, zero exploits.",
   },
   {
     step: "STEP 04",
     phase: "DOMAIN ADMIN",
     title: "Own everything, break nothing",
-    body: "Domain admin without disrupting a single production service. The point was never the ticket — it was proving which business processes I could have stopped.",
-    flag: "ACCESS ACHIEVED — full AD compromise via custom EDR bypass + delegation chain",
+    body: "Domain admin without disrupting a single production service. The point was never the ticket. It was proving which business processes I could have stopped.",
+    flag: "ACCESS ACHIEVED: full AD compromise via custom EDR bypass + delegation chain",
   },
   {
     step: "STEP 05",
@@ -235,7 +239,7 @@ export const CAPABILITIES: Capability[] = [
   {
     index: "01",
     title: "Red team & adversary simulation",
-    body: "Full-scope and assumed-breach ops that copy real tradecraft — not a scanner report with a logo on it.",
+    body: "Full-scope and assumed-breach ops that copy real tradecraft, not a scanner report with a logo on it.",
     points: [
       "EDR/AV evasion & payload dev",
       "AD and identity abuse to DA",
@@ -268,7 +272,7 @@ export const CAPABILITIES: Capability[] = [
   {
     index: "04",
     title: "Application & API security",
-    body: "Auth, session and business logic — the class of bug a scanner structurally cannot find.",
+    body: "Auth, session and business logic: the class of bug a scanner structurally cannot find.",
     points: [
       "Auth & business-logic deep dives",
       "Source review + manual triage",
@@ -277,6 +281,141 @@ export const CAPABILITIES: Capability[] = [
     ],
   },
 ];
+
+/* ------------------------------------------------------------------ */
+/* Shared with the bento tiles                                          */
+/*                                                                      */
+/* These three lists were local consts inside cve.tsx, stack.tsx and    */
+/* about.tsx. The tiles on the grid now animate the same content the    */
+/* panels render, and two copies of a list is how the panel and the     */
+/* tile end up disagreeing about how many disciplines there are. One    */
+/* source, two presentations.                                           */
+/* ------------------------------------------------------------------ */
+
+export type CveStep = { step: string; title: string; body: string; short: string };
+
+/** CVE-2025-56459, as an escalation. The tile animates `short`. */
+export const CVE_CHAIN: CveStep[] = [
+  {
+    step: "01",
+    short: "A tag field that trusts its input",
+    title: "A tag field that trusts its input",
+    body: "An OPC client stores operator-supplied tag metadata and renders it back into the interface without sanitisation. On its own this is a stored cross-site scripting bug, and in an ordinary browser that is where it would stop.",
+  },
+  {
+    step: "02",
+    short: "The renderer is privileged",
+    title: "The renderer is privileged",
+    body: "The application is Electron. The window rendering that stored value is not a sandboxed web page. It is a renderer with access to platform APIs, which means script running inside it is not confined to the document.",
+  },
+  {
+    step: "03",
+    short: "Script becomes native execution",
+    title: "Script becomes native execution",
+    body: "Once injected script executes in a privileged renderer, the boundary that normally separates a web bug from the host machine is not there. Stored XSS escalates to code execution on the workstation.",
+  },
+  {
+    step: "04",
+    short: "The workstation runs the plant",
+    title: "The workstation is the point",
+    body: "These clients sit on OT and SCADA engineering workstations, the machines that talk to industrial controllers. The impact is not a defaced page; it is a foothold on the host that operates physical process equipment.",
+  },
+];
+
+export type Discipline = { name: string; blurb: string; tools: string[] };
+
+/** The resume's full technical surface. The tile marquees `tools`. */
+export const DISCIPLINES: Discipline[] = [
+  {
+    name: "Application security",
+    blurb:
+      "Manual web and API testing, with source review where the bug is likelier to be in the code than the response.",
+    tools: [
+      "Burp Suite",
+      "SonarQube",
+      "Manual web / API testing",
+      "AuthN & AuthZ testing",
+      "Source-code review",
+    ],
+  },
+  {
+    name: "Infrastructure & adversary simulation",
+    blurb:
+      "Assumed-breach operations against real estates: attack paths, privilege escalation, and whether the EDR actually fires.",
+    tools: [
+      "Nessus",
+      "Nipper",
+      "Metasploit",
+      "PowerShell Empire",
+      "Wireshark",
+      "AD attack-path analysis",
+    ],
+  },
+  {
+    name: "Threat intelligence & analysis",
+    blurb:
+      "Turning fragmented indicators into evidence an analyst can follow and a decision-maker can act on.",
+    tools: [
+      "IOC enrichment",
+      "OSINT",
+      "Malware-campaign attribution",
+      "CISA KEV / CVE research",
+      "Ghidra",
+      "IDA Pro",
+      "Any.run",
+    ],
+  },
+  {
+    name: "Engineering",
+    blurb:
+      "The tooling that catches what the testing found. Ingestion, normalisation, and the analyst-facing product on top.",
+    tools: [
+      "Python",
+      "TypeScript",
+      "Next.js",
+      "React",
+      "WebSockets",
+      "Security automation",
+      "Data ingestion & normalisation",
+    ],
+  },
+];
+
+/** Every tool, flattened, for the capability tile's marquee. */
+export const TOOLKIT: string[] = DISCIPLINES.flatMap((d) => d.tools);
+
+export type CareerPoint = { when: string; what: string; role: string };
+
+export const CAREER: CareerPoint[] = [
+  { when: "2024 to present", what: "BDO India", role: "Red Team Specialist" },
+  {
+    when: "2022 to 2024",
+    what: "Creative Brains & Outreach",
+    role: "Application Security Tester",
+  },
+  {
+    when: "2021 to 2025",
+    what: "Bennett University",
+    role: "B.Tech CS, Cybersecurity major",
+  },
+];
+
+/**
+ * The anonymised client labels, in the order the Ops panel shows them.
+ *
+ * THIS IS THE SOURCE, and ops.tsx indexes into it — not the other way
+ * round, and NOT derived from `OPS` above. `OPS` is a four-entry list
+ * left from the previous design that nothing renders any more; deriving
+ * from it put a client on the tile that the panel behind it does not
+ * have, and made the counter read "01 / 04" next to five cards.
+ */
+export const CLIENT_LABELS = [
+  "Non-banking financial institution",
+  "State government services platform",
+  "Financial insurance enterprise",
+  "Healthcare & enterprise clients",
+  "Government digital programme",
+] as const;
 
 export const TOOLBELT = [
   "Cobalt Strike",
@@ -304,7 +443,7 @@ export const VENTURES = {
   product: {
     status: "LAUNCHING",
     name: "Forensia",
-    body: "Threat intelligence that doesn't drown you. Forensia takes your noisy external exposure and returns a short, ranked list of what's actually going to hurt — in language a board understands.",
+    body: "Threat intelligence that doesn't drown you. Forensia takes your noisy external exposure and returns a short, ranked list of what's actually going to hurt, in language a board understands.",
     points: [
       "continuous external discovery",
       "attack paths, not finding lists",

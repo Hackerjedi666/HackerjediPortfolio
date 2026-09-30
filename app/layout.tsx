@@ -1,18 +1,33 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Chakra_Petch, JetBrains_Mono } from "next/font/google";
+import { Space_Grotesk, Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import "lenis/dist/lenis.css";
+import { SmoothScroll } from "@/components/chrome/smooth-scroll";
 import { BootSequence } from "@/components/chrome/boot-sequence";
 import { Cursor } from "@/components/chrome/cursor";
-import { SiteNav } from "@/components/chrome/site-nav";
 import { GlobalInk } from "@/components/effects/global-ink";
 import { TraceLine } from "@/components/effects/trace-line";
 import { META } from "@/lib/content/site";
 
-const chakraPetch = Chakra_Petch({
-  variable: "--font-chakra-petch",
+// Three voices, each with one job. Space Grotesk runs at its natural
+// width — the previous build condensed every headline to 86%, and a width
+// axis pulled tight is the first thing legibility loses.
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  // 300 and 400 exist only for the kinetic email treatment, which
+  // interpolates weight on hover and needs somewhere to start from.
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+// Body voice. Mono used to carry the whole page, which reads as a tool
+// rather than a practice; it is now confined to data and labels.
+const manrope = Manrope({
+  variable: "--font-manrope",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -24,13 +39,17 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: `${META.name} — Offensive Security`,
+  /* Required for the generated OG card to resolve to an absolute URL.
+     Without it Next warns at build and crawlers get a relative src, which
+     most of them simply drop — the card would silently not appear. */
+  metadataBase: new URL("https://rubberduckypro.com"),
+  title: `${META.name} · Offensive Security`,
   description:
-    "Red teamer turned founder. Assumed-breach operations against banks, insurers and state platforms — and Forensia, threat intelligence that doesn't drown you.",
+    "Red teamer turned founder. Assumed-breach operations against banks, insurers and state platforms, and Forensia: threat intelligence that doesn't drown you.",
   openGraph: {
-    title: `${META.name} — Offensive Security`,
+    title: `${META.name} · Offensive Security`,
     description:
-      "Four years of assumed-breach ops. Selected engagements, the anatomy of one op, and a shell you can type into.",
+      "Assumed-breach operations against banks, insurers and state platforms. Selected engagements, a published CVE, and a terminal you can type into.",
     type: "website",
   },
 };
@@ -46,7 +65,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${chakraPetch.variable} ${jetbrainsMono.variable}`}
+      className={`${spaceGrotesk.variable} ${manrope.variable} ${jetbrainsMono.variable}`}
     >
       <body>
         {/* Runs before first paint: on a repeat view within the same session
@@ -69,6 +88,7 @@ export default function RootLayout({
         </a>
 
         <BootSequence />
+        <SmoothScroll />
 
         {/* The page's living backdrop: a single viewport-wide ink fluid that
             the pointer pushes through, sitting at z-0 behind every section. */}
@@ -85,7 +105,6 @@ export default function RootLayout({
           className="scroll-grow fixed inset-x-0 top-0 z-[90] h-0.5 bg-[linear-gradient(90deg,var(--color-acid),#556b1f)]"
         />
 
-        <SiteNav />
         {children}
       </body>
     </html>

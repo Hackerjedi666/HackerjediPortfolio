@@ -138,7 +138,7 @@ export const PORTFOLIO_DATA = {
   manifesto:
     "Security should be invisible in operation, unmistakable in strength.",
 
-  bio: "Offensive security engineer with 4+ years across red teaming, penetration testing, and vulnerability assessment for financial, government, healthcare, and insurance environments. Focused on assumed-breach operations, attack-path realism, and outcomes that change executive decisions — not finding lists.",
+  bio: "Offensive security engineer working across red teaming, penetration testing, and vulnerability assessment for financial, government, healthcare, and insurance environments. Focused on assumed-breach operations, attack-path realism, and outcomes that change executive decisions, not finding lists.",
 
   ventures: [
     {
@@ -288,7 +288,7 @@ export const PORTFOLIO_DATA = {
       date: "2022",
       tags: ["Web AppSec", "API Security", "Infrastructure", "Code Review"],
       problem:
-        "Multiple products grew organically — 30+ web apps and 20+ APIs sitting at different maturity states with inconsistent monitoring.",
+        "Multiple products grew organically, leaving 30+ web apps and 20+ APIs at different maturity states with inconsistent monitoring.",
       approach:
         "Combined Nessus/Nipper infrastructure reviews with SonarQube-assisted manual source code analysis across the portfolio.",
       outcome:
@@ -444,7 +444,7 @@ export const PORTFOLIO_DATA = {
       // Snowflake-derived (UTC); owner: confirm if local publish date differs.
       date: "2026-05-19",
       title:
-        "Formal Verification — How to Prove Code Won't Betray You?",
+        "Formal Verification: How to Prove Code Won't Betray You?",
       // PLACEHOLDER — gated by isPlaceholder(); never reaches DOM.
       blurb: "TODO: confirm",
     },
@@ -804,7 +804,7 @@ export const PORTFOLIO_DATA = {
       // Snowflake-derived (UTC); owner: confirm if local publish date differs.
       date: "2025-11-22",
       title:
-        "WireTap: Why This Physical Attack Doesn't Break TEEs – And How They're Getting Even Better",
+        "WireTap: Why This Physical Attack Doesn't Break TEEs, And How They're Getting Even Better",
       // PLACEHOLDER — gated by isPlaceholder(); never reaches DOM.
       blurb: "TODO: confirm",
     },

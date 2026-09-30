@@ -117,7 +117,7 @@ export default function CardShaderCanvas({
     );
 
     const acid = new THREE.Color(
-      getComputedStyle(host).getPropertyValue("--color-acid").trim() || "#c2ff45"
+      getComputedStyle(host).getPropertyValue("--color-acid").trim() || "#c7f23a"
     );
 
     const material = new THREE.ShaderMaterial({

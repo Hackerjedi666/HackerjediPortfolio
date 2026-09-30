@@ -1,5 +1,7 @@
 import { WALL_POSTS, POST_COUNT, SOCIALS, type WallPost } from "@/lib/content/site";
 import { MagneticLink } from "@/components/chrome/magnetic-link";
+import { CursorCard } from "@/components/chrome/cursor-card";
+import { WRITING, DOCS_URL } from "@/lib/content/writing";
 import { SectionHead } from "@/components/sections/section-head";
 
 /** Column i takes every 3rd post, then repeats itself so the -50% drift
@@ -22,20 +24,42 @@ function Card({
   hover: string;
   duplicate?: boolean;
 }) {
-  return (
-    <a
-      href={post.url}
-      target="_blank"
-      rel="noreferrer noopener"
-      aria-hidden={duplicate || undefined}
-      tabIndex={duplicate ? -1 : undefined}
-      className={`block border border-hairline bg-panel p-4.5 text-ink-soft transition-[border-color,background-color,transform] duration-200 hover:bg-panel-hi hover:scale-[1.02] ${hover}`}
-    >
-      <span className="mb-2.5 block text-micro tracking-[0.18em] text-acid">
-        {post.date}
-      </span>
+  const className = `block border border-hairline bg-panel p-4.5 text-ink-soft transition-[border-color,background-color,transform] duration-400 ease-out-expo hover:bg-panel-hi hover:scale-[1.02] ${hover}`;
+
+  const inner = (
+    <>
+      <span className="mb-2.5 block text-micro text-acid">{post.date}</span>
       <span className="block text-sm leading-[1.45]">{post.title}</span>
-    </a>
+    </>
+  );
+
+  // The duplicate pass exists only so the drift loops seamlessly. It is
+  // aria-hidden and untabbable, and it must stay a plain anchor: giving it a
+  // cursor card too would mean two previews racing for the same pointer.
+  if (duplicate) {
+    return (
+      <a
+        href={post.url}
+        target="_blank"
+        rel="noreferrer noopener"
+        aria-hidden
+        tabIndex={-1}
+        className={className}
+      >
+        {inner}
+      </a>
+    );
+  }
+
+  return (
+    <CursorCard
+      href={post.url}
+      kicker={post.date}
+      description={post.title}
+      className={className}
+    >
+      {inner}
+    </CursorCard>
   );
 }
 
@@ -86,6 +110,26 @@ export function Research() {
         ))}
       </div>
 
+      {/* The long-form security writing on the practice's own site. Added
+          alongside the wall, not instead of it: the wall is the X archive
+          and these are the documentation pieces. */}
+      <div className="shell shell-wide mt-14">
+        <p className="text-label text-ink-label">Long-form, on overwatchlabs.ai</p>
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {WRITING.slice(0, 6).map((w) => (
+            <CursorCard
+              key={w.href}
+              href={w.href}
+              kicker={w.topic}
+              description={w.blurb}
+              className="rounded-cell border border-hairline bg-panel-hi p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+            >
+              <span className="block text-sm leading-snug">{w.title}</span>
+            </CursorCard>
+          ))}
+        </div>
+      </div>
+
       <div className="shell shell-wide mt-10 flex flex-wrap gap-3">
         <MagneticLink
           href={SOCIALS.twitter}
@@ -96,6 +140,9 @@ export function Research() {
         </MagneticLink>
         <MagneticLink href={SOCIALS.github} external className="btn btn-ghost">
           TOOLS ON GITHUB →
+        </MagneticLink>
+        <MagneticLink href={DOCS_URL} external className="btn btn-ghost">
+          ALL DOCS →
         </MagneticLink>
       </div>
     </section>
