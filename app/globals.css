@@ -2076,6 +2076,79 @@ html.lenis { scroll-behavior: auto; }
   .tile-live-hops > span { opacity: 1; transform: none; }
 }
 
+/* Compact layouts need room for the content that floats above desktop tiles.
+   Keep the labels in flow so longer client names and text zoom can grow them. */
+@media (max-width: 63.99rem) {
+  .bento-tile { min-width: 0; }
+  .bento-tile-opens:hover .bento-copy { transform: none; }
+  .bento-cta {
+    position: static;
+    margin-top: 1.25rem;
+    opacity: 1;
+    transform: none;
+  }
+  :is(#published, #ops) .bento-copy {
+    order: 1;
+    margin-top: 0;
+    padding-top: 1.25rem;
+  }
+  :is(#published, #ops) .bento-overlay {
+    position: relative;
+    inset: auto;
+    order: 2;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-hairline);
+  }
+  :is(#published, #ops) .tile-live {
+    position: static;
+    min-height: 5.5rem;
+  }
+  :is(#published, #ops) .bento-cta { order: 3; }
+  #stack .bento-copy { padding-top: 5rem; }
+  #signals { min-height: 30rem; }
+  .hero-duo > .hoodie-dev {
+    width: min(100%, 16rem);
+    justify-self: center;
+  }
+  .hero-featured-tweet { padding: 1rem; }
+  .hero-featured-tweet > p { margin-top: 1rem; }
+  .hero-featured-tweet > p:first-of-type { font-size: 1rem; line-height: 1.5; }
+}
+
+@media (min-width: 48rem) and (max-width: 63.99rem) {
+  .bento-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bento-tile { grid-column: span 1; }
+  :is(#ops, #about) { grid-column: span 2; }
+  .hero-duo { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
+}
+
+@media (max-width: 47.99rem) {
+  .hero-lead { min-height: auto; padding-top: 1.5rem; }
+  .hero-lead-inner { gap: 1.5rem; }
+  .hero-lead-title { margin-top: 1.5rem; }
+  .hero-lead-lede { margin-top: 1.5rem; font-size: 1rem; line-height: 1.6; }
+  .hero-featured-tweet > div:first-child {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: .25rem .75rem;
+  }
+  .hero-featured-tweet > div:first-child > img { width: 36px; height: 36px; grid-row: span 2; }
+  .hero-featured-tweet > div:first-child > span { grid-column: 2; margin-left: 0; }
+  .bento-sheet { inset: .375rem; }
+  .bento-sheet-body { min-height: 0; overflow-wrap: anywhere; }
+  .bento-sheet-body .section { padding-inline: 1rem; }
+  .bento-sheet-body article { padding: 1.25rem; }
+  .bento-sheet-body .text-venture { font-size: clamp(1.5rem, 7vw, 2rem); }
+  .bento-sheet-body :is(input, textarea) { font-size: 1rem; }
+  #contact { padding-top: 4rem; }
+}
+
+/* A touch CTA must reserve space, including on wide tablets. */
+@media (hover: none) {
+  .bento-cta { position: static; margin-top: 1.25rem; }
+}
+
 /* ============================================================
    HOODIE DEV
 
